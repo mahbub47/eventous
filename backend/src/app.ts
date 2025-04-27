@@ -14,8 +14,7 @@ app.use("/api/events", eventRoutes);
 
 app.use((req: Request, res, next) => {
     next(createHttpError( 404 ,"Endpoint not found"));
-})
-
+});
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use((error: unknown, req: Request, res: Response, next: NextFunction) => {
