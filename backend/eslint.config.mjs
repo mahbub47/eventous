@@ -5,7 +5,7 @@ import tseslint from "typescript-eslint";
 
 export default defineConfig([
   {
-    ignores: ["dist/**", "node_modules/**"], 
+    ignores: ["dist/**", "node_modules/**"],
   },
   {
     files: ["**/*.{js,mjs,cjs,ts}"],
@@ -15,8 +15,8 @@ export default defineConfig([
   {
     files: ["**/*.{js,mjs,cjs,ts}"],
     languageOptions: {
-      globals: globals.browser,
+      globals: globals.node,
     },
   },
-  tseslint.configs.recommended,
+  ...tseslint.configs.recommended,
 ]);
