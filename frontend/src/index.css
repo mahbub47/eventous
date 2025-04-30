@@ -118,3 +118,10 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .card{
+    background-color: var(--color-yellow-400);
+    
+  }
+}
