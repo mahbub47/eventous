@@ -120,8 +120,7 @@
 }
 
 @layer components {
-  .card{
+  .card {
     background-color: var(--color-yellow-400);
-
   }
 }
