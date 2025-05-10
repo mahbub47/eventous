@@ -1,7 +1,7 @@
 function AboutUs() {
   return (
     <div className="w-full px-6 md:px-[20%] py-10 md:py-30 bg-white text-black ">
-      <h1 className="text-3xl md:text-5xl font-bold mb-6 text-yellow-400">
+      <h1 className="text-3xl md:text-6xl font-normal mb-6 bg-yellow-300 text-stone-900 xl:text-[94px]/24">
         About Eventous
       </h1>
       <p className="text-base md:text-lg leading-relaxed mb-6">
@@ -21,7 +21,7 @@ function AboutUs() {
         both event organizers and attendees.
       </p>
 
-      <h2 className="text-2xl md:text-4xl font-semibold mb-8 text-yellow-400">
+      <h2 className="text-2xl md:text-4xl  font-normal mb-8 bg-yellow-300">
         Meet the Team
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-10">

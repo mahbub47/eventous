@@ -1,7 +1,7 @@
 function PrivacyPolicy() {
   return (
     <div className="w-full px-6 md:px-[20%] py-10 md:py-20 bg-white text-black">
-      <h1 className="text-3xl md:text-5xl font-bold mb-6 text-yellow-400">
+      <h1 className="text-3xl md:text-6xl font-normal mb-6 bg-yellow-300 lg:text-[94px]/24">
         Privacy Policy
       </h1>
       <p className="text-base md:text-lg leading-relaxed mb-6">

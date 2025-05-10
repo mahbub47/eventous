@@ -24,7 +24,8 @@ function Navbar() {
             <div className="flex justify-center items-center px-4">
               <i className="bx bx-plus text-red-600 text-md"></i>
               <a
-                href="#"
+                href={"/login"}
+                target="_blank"
                 className="text-md font-semibold text-stone-900 py-1.5 px-0.5 underline"
               >
                 Create
@@ -32,18 +33,30 @@ function Navbar() {
             </div>
             <div className="flex justify-center items-center px-4">
               <i className="bx bx-heart text-red-600"></i>
-              <a href="#" className="text-md font-semibold text-stone-900 py-1.5 px-1">
+              <a
+                href={"/login"}
+                target="_blank"
+                className="text-md font-semibold text-stone-900 py-1.5 px-1"
+              >
                 Likes
               </a>
             </div>
           </div>
           <div className="md:flex justify-self-end hidden">
-            <button className="text-lg font-semibold py-1.5 px-3 mx-5 cursor-pointer hover:underline">
+            <a
+              href={"/login"}
+              target="_blank"
+              className="text-lg font-semibold py-1.5 px-3 mx-5 cursor-pointer hover:underline"
+            >
               Login
-            </button>
-            <button className="text-lg text-stone-900 font-semibold py-1.5 px-5 bg-yellow-300 rounded-sm cursor-pointer hover:bg-amber-400 transition-colors">
+            </a>
+            <a
+              href={"/signup"}
+              target="_blank"
+              className="text-lg text-stone-900 font-semibold py-1.5 px-5 bg-yellow-300 rounded-sm cursor-pointer hover:bg-amber-400 transition-colors"
+            >
               Signup
-            </button>
+            </a>
           </div>
         </nav>
         <div className="md:hidden">
