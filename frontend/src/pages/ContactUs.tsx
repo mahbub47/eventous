@@ -1,10 +1,12 @@
-
 function ContactUs() {
   return (
-    <div className="w-full px-6 md:px-[20%] py-10 md:py-20 bg-white text-black">
-      <h1 className="text-3xl md:text-6xl font-normal mb-6 bg-yellow-300 lg:text-[94px]/24 text-stone-900">Contact Us</h1>
-      <p className="text-base md:text-lg leading-relaxed mb-10">
-        Got questions, feedback, or want to work with us? We’d love to hear from you! Fill out the form below or reach out through email.
+    <div className="w-full px-6 md:px-[20%] py-10 md:py-20 bg-white text-stone-900">
+      <h1 className="text-3xl md:text-6xl font-normal mb-6 bg-yellow-300 lg:text-[94px]/24 text-stone-900">
+        Contact Us
+      </h1>
+      <p className="text-sm md:text-lg mb-10">
+        Got questions, feedback, or want to work with us? We’d love to hear from
+        you! Fill out the form below or reach out through email.
       </p>
 
       <form className="flex flex-col gap-6">
@@ -42,7 +44,7 @@ function ContactUs() {
         </div>
         <button
           type="submit"
-          className="bg-yellow-300 hover:bg-yellow-400 transition-colors text-black font-semibold py-2.5 px-10 rounded-sm cursor-pointer"
+          className="bg-yellow-300 hover:bg-yellow-400 transition-colors text-stone-900 font-semibold py-2.5 px-10 rounded-sm cursor-pointer"
         >
           Send Message
         </button>
@@ -50,12 +52,15 @@ function ContactUs() {
 
       <div className="mt-10 text-sm text-gray-600">
         You can also email us directly at{" "}
-        <a href="mailto:eventous.team@example.com" className="text-yellow-400 underline">
+        <a
+          href="mailto:eventous.team@example.com"
+          className="text-yellow-400 underline"
+        >
           eventous.team@example.com
         </a>
       </div>
     </div>
-  )
+  );
 }
 
-export default ContactUs
+export default ContactUs;
