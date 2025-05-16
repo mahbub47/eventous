@@ -4,7 +4,7 @@ function PrivacyPolicy() {
       <h1 className="text-3xl md:text-6xl font-normal mb-6 bg-yellow-300 lg:text-[94px]/24">
         Privacy Policy
       </h1>
-      <p className="text-base md:text-lg leading-relaxed mb-6">
+      <p className="text-sm md:text-lg mb-6">
         At Eventous, your privacy is very important to us. This policy outlines
         how we collect, use, and protect your information.
       </p>
@@ -13,7 +13,7 @@ function PrivacyPolicy() {
         <h2 className="text-xl md:text-2xl font-semibold mb-2">
           1. Information We Collect
         </h2>
-        <p className="text-base leading-relaxed">
+        <p className="text-sm">
           We collect personal information you provide when creating an account,
           such as your name, email, and profile picture. We also gather
           event-related data and analytics to improve our services.
@@ -24,7 +24,7 @@ function PrivacyPolicy() {
         <h2 className="text-xl md:text-2xl font-semibold mb-2">
           2. How We Use Your Information
         </h2>
-        <p className="text-base leading-relaxed">
+        <p className="text-sm">
           We use your data to personalize your experience, provide event
           features, and send important updates. We do not sell your information
           to third parties.
@@ -35,7 +35,7 @@ function PrivacyPolicy() {
         <h2 className="text-xl md:text-2xl font-semibold mb-2">
           3. Data Security
         </h2>
-        <p className="text-base leading-relaxed">
+        <p className="text-sm">
           We implement industry-standard security measures to protect your data.
           However, no system is 100% secure, and we recommend you take
           precautions with your account.
@@ -46,7 +46,7 @@ function PrivacyPolicy() {
         <h2 className="text-xl md:text-2xl font-semibold mb-2">
           4. Your Rights
         </h2>
-        <p className="text-base leading-relaxed">
+        <p className="text-sm ">
           You can request to view, update, or delete your information at any
           time. Contact us if you have any privacy concerns.
         </p>
@@ -56,7 +56,7 @@ function PrivacyPolicy() {
         <h2 className="text-xl md:text-2xl font-semibold mb-2">
           5. Changes to This Policy
         </h2>
-        <p className="text-base leading-relaxed">
+        <p className="text-sm">
           We may update our Privacy Policy from time to time. Changes will be
           posted here with a revised date.
         </p>
