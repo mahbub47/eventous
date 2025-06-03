@@ -13,7 +13,6 @@ export const googleAuthController = async (
   try {
     const { token } = req.body;
 
-    // Validate token with Google
     const response = await axios.get(
       "https://www.googleapis.com/oauth2/v3/tokeninfo",
       {

@@ -29,7 +29,6 @@ function SigninPage() {
       try {
         const { access_token } = tokenResponse;
 
-        // Send token to backend
         const res = await axios.post("http://localhost:5000/api/auth/google", {
           token: access_token,
         });
@@ -45,7 +44,7 @@ function SigninPage() {
       }
     },
     onError: (error) => console.error("Login Error:", error),
-    flow: "implicit", // or "auth-code" if you plan to use server-to-server auth flow
+    flow: "implicit",
   });
 
   return (

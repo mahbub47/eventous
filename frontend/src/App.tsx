@@ -11,6 +11,8 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import SigninPage from "./pages/SigninPage";
 import UserDashboard from "./pages/UserDashboard";
 import OTPPage from "./pages/OTPPage";
+import UnauthorizedErrorPage from "./pages/UnauthorizedErrorPage";
+import ServerErrorPage from "./pages/ServerErrorPage";
 
 function App() {
   const GoogleAuthWrapper = () => {
@@ -38,6 +40,8 @@ function App() {
         <Route path="/signup" element={<GoogleAuthWrapper />} />
         <Route path="/otp-verification" element={<OTPPage />} />
         <Route path="*" element={<PageNotFoundPage />} />
+        <Route path="/un-authorized" element={<UnauthorizedErrorPage />} />
+        <Route path="/server-error" element={<ServerErrorPage />} />
       </Routes>
     </Router>
   );
