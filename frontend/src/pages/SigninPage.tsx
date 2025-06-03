@@ -1,13 +1,53 @@
-import {
-  FaEnvelope,
-  FaFacebookF,
-  FaGoogle,
-  FaLinkedinIn,
-  FaLock,
-} from "react-icons/fa";
+import { FaEnvelope, FaLock } from "react-icons/fa";
 import bgImage from "../assets/signup-bg.jpg";
+import { useGoogleLogin } from "@react-oauth/google";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 function SigninPage() {
+  const navigate = useNavigate();
+
+  const [email, setEmail] = useState("");
+
+  const handleSend = async () => {
+    const result = await axios.post("http://localhost:5000/api/auth/send-otp", {
+      email,
+    });
+    alert(result.data.message);
+    navigate("/otp-verification", {
+      state: {
+        user: {
+          email: email,
+        },
+      },
+    });
+  };
+
+  const login = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        const { access_token } = tokenResponse;
+
+        // Send token to backend
+        const res = await axios.post("http://localhost:5000/api/auth/google", {
+          token: access_token,
+        });
+
+        const { name, email, role } = res.data.user;
+        const { token } = res.data.token;
+        const obj = { name, email, role, token };
+        localStorage.setItem("user-info", JSON.stringify(obj));
+
+        navigate("/user-dashboard");
+      } catch (error) {
+        console.error("Login failed", error);
+      }
+    },
+    onError: (error) => console.error("Login Error:", error),
+    flow: "implicit", // or "auth-code" if you plan to use server-to-server auth flow
+  });
+
   return (
     <>
       <div
@@ -23,7 +63,8 @@ function SigninPage() {
           <h1 className="text-xl font-normal text-stone-900">Eventous</h1>
           <h2 className="text-3xl md:text-4xl font-semibold mt-4 mb-2 text-stone-900">
             Welcome! <br />
-            Join Eventous <br />Today
+            Join Eventous <br />
+            Today
           </h2>
           <p className="text-sm text-stone-600 mb-6">
             Create events. Discover opportunities. <br />
@@ -39,11 +80,17 @@ function SigninPage() {
                 type="email"
                 placeholder="Enter your email"
                 className="w-full pl-10 pr-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                }}
               />
             </label>
           </div>
 
-          <button className="w-full bg-yellow-300 hover:bg-yellow-400 text-stone-950 font-semibold py-2 rounded-md mb-4 transition-colors">
+          <button
+            className="w-full bg-yellow-300 hover:bg-yellow-400 text-stone-950 font-semibold py-2 rounded-md mb-4 transition-colors"
+            onClick={handleSend}
+          >
             Continue
           </button>
 
@@ -57,14 +104,16 @@ function SigninPage() {
           </div>
 
           <div className="flex justify-center gap-8 my-4">
-            <button className="p-2 rounded-full bg-gray-100 hover:bg-gray-200">
-              <FaFacebookF className="text-blue-600" />
-            </button>
-            <button className="p-2 rounded-full bg-gray-100 hover:bg-gray-200">
-              <FaGoogle className="text-red-500" />
-            </button>
-            <button className="p-2 rounded-full bg-gray-100 hover:bg-gray-200">
-              <FaLinkedinIn className="text-blue-700" />
+            <button
+              className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 cursor-pointer"
+              onClick={() => login()}
+            >
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/2048px-Google_%22G%22_logo.svg.png"
+                alt="Google Logo"
+                width={32}
+                height={32}
+              />
             </button>
           </div>
         </div>

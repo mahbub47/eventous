@@ -15,7 +15,9 @@
     "@eslint/js": "^9.25.1",
     "@types/express": "^5.0.1",
     "@types/http-errors": "^2.0.4",
+    "@types/jsonwebtoken": "^9.0.9",
     "@types/morgan": "^1.9.9",
+    "@types/nodemailer": "^6.4.17",
     "@typescript-eslint/eslint-plugin": "^8.31.0",
     "@typescript-eslint/parser": "^8.31.0",
     "eslint": "^9.25.1",
@@ -26,11 +28,18 @@
     "typescript-eslint": "^8.31.0"
   },
   "dependencies": {
+    "@types/cors": "^2.8.18",
+    "axios": "^1.9.0",
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "envalid": "^8.0.0",
     "express": "^5.1.0",
+    "googleapis": "^149.0.0",
     "http-errors": "^2.0.0",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.13.3",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "nodemailer": "^7.0.3"
   }
 }
