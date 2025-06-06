@@ -15,6 +15,7 @@ import UnauthorizedErrorPage from "./pages/UnauthorizedErrorPage";
 import ServerErrorPage from "./pages/ServerErrorPage";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { AuthProvider } from "./context/AuthContext";
 
 function App() {
   const GoogleAuthWrapper = () => {
@@ -29,7 +30,7 @@ function App() {
 
   return (
     <>
-      <ToastContainer
+    <ToastContainer
         position="top-right"
         autoClose={3000}
         hideProgressBar={false}
@@ -40,7 +41,8 @@ function App() {
         pauseOnHover
         theme="light"
       />
-      <Router>
+    <AuthProvider>
+<Router>
         <Routes>
           <Route element={<Layout />}>
             <Route path="/" element={<LandingPage />} />
@@ -58,6 +60,7 @@ function App() {
           <Route path="/server-error" element={<ServerErrorPage />} />
         </Routes>
       </Router>
+    </AuthProvider>
     </>
   );
 }
