@@ -5,8 +5,10 @@ import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import { useAuth } from "@/context/AuthContext";
 
 function SigninPage() {
+  const { setUser } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const user = location.state?.user;
@@ -53,6 +55,7 @@ function SigninPage() {
         toast.success(res.data.message);
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("user-info", JSON.stringify(res.data.user));
+        setUser(res.data.user);
 
         navigate("/user-dashboard");
       } catch (error) {

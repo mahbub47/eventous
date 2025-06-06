@@ -1,7 +1,14 @@
 import EventCard from "@/components/EventCard";
 import HeroImage from "../assets/hero-image.jpg";
+import { useAuth } from "@/context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 function LandingPage() {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  if(user){
+    navigate("/user-dashboard");
+  }
   return (
     <>
       {/* Hero Title */}
