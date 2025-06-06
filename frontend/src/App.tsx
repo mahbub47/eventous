@@ -13,6 +13,8 @@ import UserDashboard from "./pages/UserDashboard";
 import OTPPage from "./pages/OTPPage";
 import UnauthorizedErrorPage from "./pages/UnauthorizedErrorPage";
 import ServerErrorPage from "./pages/ServerErrorPage";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const GoogleAuthWrapper = () => {
@@ -26,24 +28,37 @@ function App() {
   };
 
   return (
-    <Router>
-      <Routes>
-        <Route element={<Layout />}>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/about" element={<AboutUs />} />
-          <Route path="/contact" element={<ContactUs />} />
-          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-          <Route path="/user-dashboard" element={<UserDashboard />} />
-          <Route path="/create-event" element={<CreateEventPage />} />
-        </Route>
-        <Route path="/login" element={<GoogleAuthWrapper />} />
-        <Route path="/signup" element={<GoogleAuthWrapper />} />
-        <Route path="/otp-verification" element={<OTPPage />} />
-        <Route path="*" element={<PageNotFoundPage />} />
-        <Route path="/un-authorized" element={<UnauthorizedErrorPage />} />
-        <Route path="/server-error" element={<ServerErrorPage />} />
-      </Routes>
-    </Router>
+    <>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+      <Router>
+        <Routes>
+          <Route element={<Layout />}>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/about" element={<AboutUs />} />
+            <Route path="/contact" element={<ContactUs />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/user-dashboard" element={<UserDashboard />} />
+            <Route path="/create-event" element={<CreateEventPage />} />
+          </Route>
+          <Route path="/login" element={<GoogleAuthWrapper />} />
+          <Route path="/signup" element={<GoogleAuthWrapper />} />
+          <Route path="/otp-verification" element={<OTPPage />} />
+          <Route path="*" element={<PageNotFoundPage />} />
+          <Route path="/un-authorized" element={<UnauthorizedErrorPage />} />
+          <Route path="/server-error" element={<ServerErrorPage />} />
+        </Routes>
+      </Router>
+    </>
   );
 }
 

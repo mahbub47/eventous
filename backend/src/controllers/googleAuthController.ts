@@ -4,6 +4,7 @@ import jwt, { SignOptions } from "jsonwebtoken";
 import userModel from "../models/userModel";
 import { transporter } from "../utils/emailSenderConfig";
 import { generateOTP } from "../utils/generateOtp";
+import Otp from "../models/otpModel";
 
 export const googleAuthController = async (
   req: Request,
@@ -34,12 +35,13 @@ export const googleAuthController = async (
         role: "attendee",
       });
     }
+    console.log("THIS IS MY GOOGLE VERIFIED USER: ", user);
 
     const jwtSecret = process.env.JWT_SECRET || "secret123!";
     const jwtExpiry = process.env.JWT_EXPIRES_IN || "1d";
 
     const json_token = jwt.sign(
-      { _id: user._id, email },
+      { _id: user._id, email: email },
       jwtSecret as string,
       { expiresIn: jwtExpiry } as SignOptions
     );
@@ -52,8 +54,6 @@ export const googleAuthController = async (
   }
 };
 
-const otpStore = new Map<string, string>();
-
 export const sendOTP = async (
   req: Request,
   res: Response,
@@ -61,14 +61,18 @@ export const sendOTP = async (
 ) => {
   try {
     const { email } = req.body;
-    const otp = generateOTP();
 
-    otpStore.set(email, otp);
+    const otp = generateOTP();
+    const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+
+    await Otp.deleteMany({ email });
+
+    await Otp.create({ email, otp, expiresAt });
 
     await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+      from: `"Eventous" <${process.env.EMAIL_USER}>`,
       to: email,
-      subject: "Your One-Time Password (OTP) for Eventous Login",
+      subject: `${otp} is your otp for Eventous Login`,
       html: `
       <div style="max-width: 600px; margin: auto; padding: 24px 48px; font-family: 'Poppins', sans-serif; background-color: #ffffff; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.05); text-align: center;">
         <h1 style="color: #000000; font-size: 32px; margin-bottom: 8px; font-weight: 300; margin-bottom: 30px;">Eventous</h1>
@@ -102,9 +106,25 @@ export const sendOTP = async (
 export const verifyOTP = async (req: Request, res: Response) => {
   try {
     const { email, otp } = req.body;
-    const storedOtp = otpStore.get(email);
 
-    if (storedOtp === otp) {
+    const record = await Otp.findOne({ email });
+
+    if (!record) {
+      res.status(400).json({ message: "OTP not found" });
+      return;
+    }
+
+    if (record!.expiresAt < new Date()) {
+      await Otp.deleteOne({ _id: record!._id });
+      res.status(410).json({ message: "OTP expired" });
+      return;
+    }
+    if (record!.otp !== otp) {
+      res.status(400).json({ message: "Invalid OTP" });
+      return;
+    }
+
+    if (record!.otp === otp) {
       let user = await userModel.findOne({ email });
       if (!user) {
         user = await userModel.create({
@@ -113,17 +133,18 @@ export const verifyOTP = async (req: Request, res: Response) => {
           role: "attendee",
         });
       }
-      otpStore.delete(email);
+      console.log("THIS IS MY OTP VERIFIED USER: ", user);
       const jwtSecret = process.env.JWT_SECRET || "secret123!";
       const jwtExpiry = process.env.JWT_EXPIRES_IN || "1d";
 
       const json_token = jwt.sign(
-        { email },
+        { _id: user._id, email: email },
         jwtSecret as string,
         { expiresIn: jwtExpiry } as SignOptions
       );
-
-      res.status(200).json({ message: "Success", token: json_token, user });
+      await Otp.deleteOne({ _id: record!._id });
+      res.status(200).json({ message: "Email verification completed", token: json_token, user });
+      return;
     }
   } catch (error) {
     res.status(400).json({ message: "Invalid OTP", error: error });
