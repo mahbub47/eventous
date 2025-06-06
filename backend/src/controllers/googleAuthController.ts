@@ -35,7 +35,6 @@ export const googleAuthController = async (
         role: "attendee",
       });
     }
-    console.log("THIS IS MY GOOGLE VERIFIED USER: ", user);
 
     const jwtSecret = process.env.JWT_SECRET || "secret123!";
     const jwtExpiry = process.env.JWT_EXPIRES_IN || "1d";
