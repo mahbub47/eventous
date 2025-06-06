@@ -2,6 +2,7 @@ import { useState } from "react";
 import bgImage from "../assets/signup-bg.jpg";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function OTPPage() {
   const navigate = useNavigate();
@@ -11,18 +12,52 @@ function OTPPage() {
   const email = user.email;
   const [otp, setOtp] = useState("");
 
-  const handleVerify = async () => {
-    const res = await axios.post("http://localhost:5000/api/auth/verify-otp", {
-      email,
-      otp,
+  const handleEditEmail = () => {
+    navigate("/signup", {
+      state: {
+        user: {
+          email: email,
+        },
+      },
     });
-    const { token } = res.data.token;
-    const obj = { token };
-    localStorage.setItem("user-info", JSON.stringify(obj));
+  };
 
-    navigate("/user-dashboard");
-    alert(res.data.message);
-    localStorage.setItem("token", res.data.token);
+  const handleVerify = async () => {
+    try {
+      const res = await axios.post(
+        "http://localhost:5000/api/auth/verify-otp",
+        {
+          email,
+          otp,
+        }
+      );
+      
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("user-info", JSON.stringify(res.data.user));
+
+      toast.success(res.data.message);
+      navigate("/user-dashboard");
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      if (error.response?.status === 410) {
+        toast.error("Your OTP has expired.");
+      } else {
+        toast.error(error.response?.data.message || "Something went wrong");
+      }
+    }
+  };
+
+  const handleResendOTP = async () => {
+    try {
+      const res = await axios.post("http://localhost:5000/api/auth/send-otp", {
+        email,
+      });
+      toast.success(res.data.message);
+    } catch (error) {
+      toast.error("Please try again after some time");
+      console.log("OTP RESEND ERROR: ", error);
+    }
   };
   return (
     <>
@@ -58,7 +93,10 @@ function OTPPage() {
                 disabled
               />
               <span className="absolute right-4 my-2">
-                <button className="text-stone-900 font-medium cursor-pointer">
+                <button
+                  className="text-stone-900 font-medium cursor-pointer"
+                  onClick={handleEditEmail}
+                >
                   Edit
                 </button>
               </span>
@@ -68,7 +106,10 @@ function OTPPage() {
           <div className="mb-4">
             <label className="relative block">
               <input
-                type="code"
+                type="text"
+                minLength={6}
+                maxLength={6}
+                required
                 placeholder="Enter OTP"
                 className="w-full pl-4 pr-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
                 onChange={(e) => {
@@ -86,7 +127,10 @@ function OTPPage() {
           </button>
 
           <div className="flex items-center text-gray-600 text-sm mb-4 justify-center">
-            <button className="text-lg font-medium text-stone-900 cursor-pointer">
+            <button
+              className="text-lg font-medium text-stone-900 cursor-pointer"
+              onClick={handleResendOTP}
+            >
               Resend code
             </button>
           </div>
