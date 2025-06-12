@@ -2,37 +2,32 @@ import "dotenv/config";
 import express, { NextFunction, Request, Response } from "express";
 import createHttpError, { isHttpError } from "http-errors";
 import morgan from "morgan";
-import eventRoutes from "./routes/events";
+import eventRoutes from "./routes/eventRoutes";
 import authRoutes from "./routes/authRoutes";
+import userRoutes from "./routes/userRoutes"
 import cors from "cors";
-import { verifyToken } from "./middleware/verifyToken";
+import cookieParser from "cookie-parser";
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    credentials: true,
+    origin: "http://localhost:5173",
+  })
+);
+
+app.use(cookieParser());
 
 app.use(morgan("dev"));
 
 app.use(express.json());
 
-interface AuthenticatedRequest extends Request {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  user?: any;
-}
-
-app.get("/api/check-auth", verifyToken, (req: AuthenticatedRequest, res, next) => {
-  try {
-    res.json({ message: "You are authenticated", user: req.user });
-    return;
-  } catch (error) {
-    next(error);
-  }
-  
-});
-
 app.use("/api/events", eventRoutes);
 
 app.use("/api/auth", authRoutes);
+
+app.use("/api/users", userRoutes);
 
 app.use((req: Request, res, next) => {
   next(createHttpError(404, "Endpoint not found"));

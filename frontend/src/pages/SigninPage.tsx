@@ -1,11 +1,11 @@
-import { FaEnvelope, FaLock } from "react-icons/fa";
-import bgImage from "../assets/signup-bg.jpg";
-import { useGoogleLogin } from "@react-oauth/google";
-import axios from "axios";
-import { useNavigate, useLocation } from "react-router-dom";
-import { useState } from "react";
-import { toast } from "react-toastify";
 import { useAuth } from "@/context/AuthContext";
+import { useGoogleLogin } from "@react-oauth/google";
+import api from "@/utils/api";
+import { useState } from "react";
+import { FaEnvelope, FaLock } from "react-icons/fa";
+import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import bgImage from "@/assets/signup-bg.jpg";
 
 function SigninPage() {
   const { setUser } = useAuth();
@@ -30,7 +30,7 @@ function SigninPage() {
     }
 
     setError("");
-    const res = await axios.post("http://localhost:5000/api/auth/send-otp", {
+    const res = await api.post("/api/auth/send-otp", {
       email,
     });
     toast.success(res.data.message);
@@ -48,13 +48,17 @@ function SigninPage() {
       try {
         const { access_token } = tokenResponse;
 
-        const res = await axios.post("http://localhost:5000/api/auth/google", {
-          token: access_token,
-        });
+        const res = await api.post(
+          "/api/auth/google",
+          {
+            token: access_token,
+          },
+          {
+            withCredentials: true,
+          }
+        );
 
         toast.success(res.data.message);
-        localStorage.setItem("token", res.data.token);
-        localStorage.setItem("user-info", JSON.stringify(res.data.user));
         setUser(res.data.user);
 
         navigate("/user-dashboard");

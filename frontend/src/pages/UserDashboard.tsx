@@ -1,4 +1,16 @@
+import { useAuth } from "@/context/AuthContext";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
 function UserDashboard() {
+  const {isAuthenticated} = useAuth();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if(!isAuthenticated){
+      navigate("/");
+    }
+  },);
+
   return (
     <div className="w-full min-h-screen ">
       <div className="w-full relative md:mt-30 mt-10 ">

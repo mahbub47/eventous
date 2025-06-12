@@ -1,15 +1,16 @@
 import axios from "axios";
-import { NextFunction, Request, Response } from "express";
+import { RequestHandler } from "express";
 import jwt, { SignOptions } from "jsonwebtoken";
+import Otp from "../models/otpModel";
 import userModel from "../models/userModel";
 import { transporter } from "../utils/emailSenderConfig";
 import { generateOTP } from "../utils/generateOtp";
-import Otp from "../models/otpModel";
+import { AuthenticatedRequest } from "../types/authenticationRequest";
 
-export const googleAuthController = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
+export const googleAuthController: RequestHandler = async (
+  req,
+  res,
+  next
 ): Promise<void> => {
   try {
     const { token } = req.body;
@@ -44,6 +45,12 @@ export const googleAuthController = async (
       jwtSecret as string,
       { expiresIn: jwtExpiry } as SignOptions
     );
+    res.cookie("token", json_token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
 
     res.status(200).json({ message: "Success", token: json_token, user });
   } catch (error) {
@@ -53,11 +60,7 @@ export const googleAuthController = async (
   }
 };
 
-export const sendOTP = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const sendOTP: RequestHandler = async (req, res, next) => {
   try {
     const { email } = req.body;
 
@@ -102,7 +105,7 @@ export const sendOTP = async (
   }
 };
 
-export const verifyOTP = async (req: Request, res: Response) => {
+export const verifyOTP: RequestHandler = async (req, res) => {
   try {
     const { email, otp } = req.body;
 
@@ -142,10 +145,51 @@ export const verifyOTP = async (req: Request, res: Response) => {
         { expiresIn: jwtExpiry } as SignOptions
       );
       await Otp.deleteOne({ _id: record!._id });
-      res.status(200).json({ message: "Email verification completed", token: json_token, user });
+      res.cookie("token", json_token, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+        maxAge: 24 * 60 * 60 * 1000,
+      });
+      res.status(200).json({
+        message: "Email verification completed",
+        token: json_token,
+        user,
+      });
       return;
     }
   } catch (error) {
     res.status(400).json({ message: "Invalid OTP", error: error });
+  }
+};
+
+export const logout: RequestHandler = async (req, res, next) => {
+  try {
+    res.cookie("token", "", {
+      httpOnly: true,
+      expires: new Date(0),
+      path: "/",
+    });
+    console.log("USER LOGGED OUT SUCCESSFULLY!!!");
+    res.json({ message: "Logged out successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+export const checkAuth: RequestHandler = (req, res, next) => {
+  try {
+    const user = (req as AuthenticatedRequest).user;
+    console.log("THIS IS USER FROM BACKEND AUTH:", user._id);
+    res.json({
+      message: "You are authenticated",
+      userId: user._id,
+      isAuthenticated: true,
+    });
+    return;
+  } catch (error) {
+    console.log("THE PROBLEM IS HERE!!!", error);
+    next(error);
   }
 };

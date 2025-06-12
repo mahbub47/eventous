@@ -1,9 +1,9 @@
 import { useState } from "react";
-import bgImage from "../assets/signup-bg.jpg";
-import axios from "axios";
+import bgImage from "@/assets/signup-bg.jpg";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "@/context/AuthContext";
+import api from "@/utils/api";
 
 function OTPPage() {
   const { setUser } = useAuth();
@@ -26,18 +26,14 @@ function OTPPage() {
 
   const handleVerify = async () => {
     try {
-      const res = await axios.post(
-        "http://localhost:5000/api/auth/verify-otp",
+      const res = await api.post(
+        "/api/auth/verify-otp",
         {
           email,
           otp,
         }
       );
-
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("user-info", JSON.stringify(res.data.user));
       setUser(res.data.user);
-
       toast.success(res.data.message);
       navigate("/user-dashboard");
 
@@ -53,7 +49,7 @@ function OTPPage() {
 
   const handleResendOTP = async () => {
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/send-otp", {
+      const res = await api.post("/api/auth/send-otp", {
         email,
       });
       toast.success(res.data.message);
