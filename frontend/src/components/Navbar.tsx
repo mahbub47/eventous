@@ -1,20 +1,30 @@
 import { useAuth } from "@/context/AuthContext";
+import api from "@/utils/api";
 import { useState } from "react";
 import { CgProfile } from "react-icons/cg";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function Navbar() {
-  const { user } = useAuth();
+  const { isAuthenticated, user, setIsAuthenticated, setUser } = useAuth();
   const navigate = useNavigate();
   const [isMenuOpen, setMenuOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const handleLogout = () => {
-    localStorage.removeItem("token");
+  const handleLogout = async () => {
+  try {
+    const res = await api.get("/api/auth/logout");
 
-    localStorage.removeItem("user-info");
+    setIsAuthenticated(false);
+    setUser(null);
+
+    toast.success(res.data.message);
 
     navigate("/signup");
-  };
+  } catch (error) {
+    console.error("Logout failed:", error);
+    toast.error("Failed to log out. Please try again.");
+  }
+};
   return (
     <div>
       <header className="flex justify-between items-center text-stone-900 px-8 py-1.5 bg-white border-b-yellow-200 border-2">
@@ -39,7 +49,7 @@ function Navbar() {
             <div className="flex justify-center items-center px-4">
               <i className="bx bx-plus text-red-600 text-md"></i>
               <a
-                href={user ? "/create-event" : "/login"}
+                href={isAuthenticated ? "/create-event" : "/login"}
                 className="text-md font-semibold text-stone-900 py-1.5 px-0.5 underline"
               >
                 Create
@@ -48,14 +58,14 @@ function Navbar() {
             <div className="flex justify-center items-center px-4">
               <i className="bx bx-heart text-red-600"></i>
               <a
-                href={user ? "/contact" : "/login"}
+                href={isAuthenticated ? "/contact" : "/login"}
                 className="text-md font-semibold text-stone-900 py-1.5 px-1"
               >
                 Likes
               </a>
             </div>
           </div>
-          {user ? (
+          {isAuthenticated ? (
             <div className="md:flex justify-self-end hidden items-center">
               <div>
                 <span
@@ -64,7 +74,7 @@ function Navbar() {
                   onMouseOver={() => setIsOpen(!isOpen)}
                 >
                   <CgProfile className="w-6 h-6 pr-1" />
-                  {user.email}
+                  <div className="max-w-50 overflow-clip">{user?.email || "guest@gmail"}</div>
                 </span>
                 {isOpen && (
                   <div className="absolute mt-2 w-50 shadow-xl bg-white z-10">
@@ -142,7 +152,7 @@ function Navbar() {
             </a>
           </li>
 
-          {user ? (
+          {isAuthenticated ? (
             <li className=" text-stone-900 list-none w-full cursor-pointer text-center p-4 hover:bg-amber-300 transition-all ">
               <a href={"/signup"} target="_blank">
                 Profile
