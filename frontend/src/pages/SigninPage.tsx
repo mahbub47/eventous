@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import bgImage from "@/assets/signup-bg.jpg";
 
 function SigninPage() {
-  const { setUser } = useAuth();
+  const { setUser, setIsAuthenticated } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const user = location.state?.user;
@@ -60,6 +60,7 @@ function SigninPage() {
 
         toast.success(res.data.message);
         setUser(res.data.user);
+        setIsAuthenticated(true);
 
         navigate("/user-dashboard");
       } catch (error) {
