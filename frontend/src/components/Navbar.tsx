@@ -11,20 +11,20 @@ function Navbar() {
   const [isMenuOpen, setMenuOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const handleLogout = async () => {
-  try {
-    const res = await api.get("/api/auth/logout");
+    try {
+      const res = await api.get("/api/auth/logout");
 
-    setIsAuthenticated(false);
-    setUser(null);
+      setIsAuthenticated(false);
+      setUser(null);
 
-    toast.success(res.data.message);
+      toast.success(res.data.message);
 
-    navigate("/signup");
-  } catch (error) {
-    console.error("Logout failed:", error);
-    toast.error("Failed to log out. Please try again.");
-  }
-};
+      navigate("/signup");
+    } catch (error) {
+      console.error("Logout failed:", error);
+      toast.error("Failed to log out. Please try again.");
+    }
+  };
   return (
     <div>
       <header className="flex justify-between items-center text-stone-900 px-8 py-1.5 bg-white border-b-yellow-200 border-2">
@@ -69,37 +69,44 @@ function Navbar() {
             <div className="md:flex justify-self-end hidden items-center">
               <div>
                 <span
-                  className="flex justify-self-end justify-center items-center text-stone-900 cursor-pointer"
+                  className="flex justify-self-end items-center text-stone-900 cursor-pointer"
                   onClick={() => setIsOpen(!isOpen)}
-                  onMouseOver={() => setIsOpen(!isOpen)}
+                  onMouseOver={() => setIsOpen(true)}
+                  onMouseLeave={() => setIsOpen(false)}
                 >
                   <CgProfile className="w-6 h-6 pr-1" />
-                  <div className="max-w-50 overflow-clip">{user?.email || "guest@gmail"}</div>
+                  <div className="max-w-50 overflow-clip box-border p-3">
+                    {user?.email || "guest@gmail"}
+                  </div>
                 </span>
                 {isOpen && (
-                  <div className="absolute mt-2 w-50 shadow-xl bg-white z-10">
+                  <div
+                    onMouseOver={() => setIsOpen(true)}
+                    onMouseLeave={() => setIsOpen(false)}
+                    className="absolute w-56 shadow-xl bg-white z-10"
+                  >
                     <div className="py-1">
                       <a
-                        href=""
-                        className="block px-4 py-2 text-md text-gray-700 hover:bg-gray-100"
+                        href="/account-settings"
+                        className="block px-4 py-4 text-md font-semibold text-gray-700 hover:bg-gray-100"
                       >
-                        Profile
+                        Account Settings
                       </a>
                       <a
                         href=""
-                        className="block px-4 py-2 text-md text-gray-700 hover:bg-gray-100"
+                        className="block px-4 py-4 text-md font-semibold text-gray-700 hover:bg-gray-100"
                       >
                         My Events
                       </a>
                       <a
                         href=""
-                        className="block px-4 py-2 text-md text-gray-700 hover:bg-gray-100"
+                        className="block px-4 py-4 text-md font-semibold text-gray-700 hover:bg-gray-100"
                       >
-                        Settings
+                        Following
                       </a>
                       <a
                         href=""
-                        className="block px-4 py-2 text-md text-gray-700 hover:bg-gray-100"
+                        className="block px-4 py-4 text-md font-semibold text-gray-700 hover:bg-gray-100"
                         onClick={handleLogout}
                       >
                         Logout
@@ -154,8 +161,8 @@ function Navbar() {
 
           {isAuthenticated ? (
             <li className=" text-stone-900 list-none w-full cursor-pointer text-center p-4 hover:bg-amber-300 transition-all ">
-              <a href={"/signup"} target="_blank">
-                Profile
+              <a href={"/account-settings"}>
+                Account Settings
               </a>
             </li>
           ) : (
