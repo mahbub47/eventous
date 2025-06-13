@@ -16,6 +16,8 @@ import ServerErrorPage from "./pages/ServerErrorPage";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AuthProvider } from "./context/AuthContext";
+import LoadingPage from "./pages/LoadingPage";
+import AccountSettingPage from "./pages/AccountSettingPage";
 
 function App() {
   const GoogleAuthWrapper = () => {
@@ -51,6 +53,7 @@ function App() {
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/user-dashboard" element={<UserDashboard />} />
             <Route path="/create-event" element={<CreateEventPage />} />
+            <Route path="/account-settings" element={<AccountSettingPage />} />
           </Route>
           <Route path="/login" element={<GoogleAuthWrapper />} />
           <Route path="/signup" element={<GoogleAuthWrapper />} />
@@ -58,6 +61,7 @@ function App() {
           <Route path="*" element={<PageNotFoundPage />} />
           <Route path="/un-authorized" element={<UnauthorizedErrorPage />} />
           <Route path="/server-error" element={<ServerErrorPage />} />
+          <Route path="/loading" element={<LoadingPage />} />
         </Routes>
       </Router>
     </AuthProvider>

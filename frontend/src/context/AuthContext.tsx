@@ -1,3 +1,4 @@
+import LoadingPage from "@/pages/LoadingPage";
 import api from "@/utils/api";
 import { createContext, useContext, useEffect, useState } from "react";
 
@@ -34,14 +35,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           const res2 = await api.get(`/api/users/${res.data.userId}`);
           setUser(res2.data);
         } catch {
-          console.log("user not logged in")
+          setUser(null);
+          setIsAuthenticated(false);
+          console.log("user not logged in");
         }
-        setIsLoading(false);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // setIsLoading(false);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         setUser(null);
         setIsAuthenticated(false);
-        if(error.response?.status === 401){
+        if (error.response?.status === 401) {
           console.log("user not logged in");
         }
       } finally {
@@ -50,7 +53,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     checkAuth();
-  }, [user, isAuthenticated]);
+  }, [isAuthenticated]);
+
+  if (isLoading) return <LoadingPage />;
 
   return (
     <AuthContext.Provider
