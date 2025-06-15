@@ -13,9 +13,7 @@ export const verifyToken: RequestHandler = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!);
-    console.log("JWT PAYLOAD before setting req: ", decoded);
     (req as AuthenticatedRequest).user = decoded;
-    console.log("JWT PAYLOAD after setting req: ", decoded);
     next();
     return;
   } catch (err) {

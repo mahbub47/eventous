@@ -6,6 +6,7 @@ import { FaEnvelope, FaLock } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import bgImage from "@/assets/signup-bg.jpg";
+import ServerErrorPage from "./ServerErrorPage";
 
 function SigninPage() {
   const { setUser, setIsAuthenticated } = useAuth();
@@ -57,14 +58,16 @@ function SigninPage() {
             withCredentials: true,
           }
         );
+        
 
         toast.success(res.data.message);
         setUser(res.data.user);
         setIsAuthenticated(true);
 
-        navigate("/user-dashboard");
+        navigate("/");
       } catch (error) {
         console.error("Login failed", error);
+        return <ServerErrorPage />;
       }
     },
     onError: (error) => console.error("Login Error:", error),
@@ -135,6 +138,7 @@ function SigninPage() {
 
           <div className="flex justify-center gap-8 my-4">
             <button
+              type="button"
               className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 cursor-pointer"
               onClick={() => login()}
             >

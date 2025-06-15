@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 import createHttpError from "http-errors";
 import mongoose from "mongoose";
-import eventModel from "../models/event";
+import eventModel from "../models/eventModel";
 
 export const getEvents: RequestHandler = async (req, res, next) => {
   try {

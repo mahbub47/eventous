@@ -1,18 +1,17 @@
 import EventCard from "@/components/EventCard";
 import HeroImage from "../assets/hero-image.jpg";
-import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
-
+import { useAuth } from "@/context/AuthContext";
+import UserDashboard from "./UserDashboard";
 function LandingPage() {
-  const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate("/user-dashboard");
-    }
-  });
+  if (isAuthenticated) {
+    return (
+        <UserDashboard />
+    );
+  }
 
   return (
     <>

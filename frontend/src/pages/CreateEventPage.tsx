@@ -1,8 +1,6 @@
-import { useAuth } from "@/context/AuthContext";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { FaCalendarAlt, FaDesktop, FaMapMarkerAlt } from "react-icons/fa";
 import { FiUpload } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
 
 type FormData = {
   date: string;
@@ -17,13 +15,6 @@ const options = [
 ];
 
 function CreateEventPage() {
-  const {isAuthenticated} = useAuth();
-  const navigate = useNavigate();
-  useEffect(() => {
-      if (!isAuthenticated) {
-        navigate("/login");
-      }
-    });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleButtonClick = () => {
@@ -34,7 +25,6 @@ function CreateEventPage() {
     const file = e.target.files?.[0];
     if (file) {
       console.log("Selected file:", file);
-      // Do something with the file (e.g., upload or preview)
     }
   };
   const [formData, setFormData] = useState<FormData>({
@@ -56,7 +46,9 @@ function CreateEventPage() {
     <div className="min-h-screen min-w-full text-stone-900">
       <form className="mx-10 lg:mx-[25%] md:mx-[10%] md:mt-30 mt-10">
         <div>
-          <h1 className="md:text-[48px] text-3xl font-semibold">Create an event</h1>
+          <h1 className="md:text-[48px] text-3xl font-semibold">
+            Create an event
+          </h1>
           <p className="md:text-lg text-sm font-normal">
             Planning something exciting? Let’s make it official! Fill out the
             form below to create and share your event with others.
@@ -64,7 +56,9 @@ function CreateEventPage() {
         </div>
         <div className="mt-10">
           <h2 className="md:text-[32px] text-2xl font-semibold">Event title</h2>
-          <h3 className="md:text-md text-sm">Give your event a name that grabs attention</h3>
+          <h3 className="md:text-md text-sm">
+            Give your event a name that grabs attention
+          </h3>
           <input
             type="text"
             placeholder="Event title"
@@ -80,7 +74,9 @@ function CreateEventPage() {
         </div>
         <div className="mt-10">
           <h2 className="md:text-[32px] text-2xl font-semibold">Date & Time</h2>
-          <h3 className="md:text-lg text-sm">Choose when your event will take place</h3>
+          <h3 className="md:text-lg text-sm">
+            Choose when your event will take place
+          </h3>
           <div>
             <input
               name="date"
@@ -155,7 +151,9 @@ function CreateEventPage() {
         </div>
 
         <div className="mt-15 ">
-          <h2 className="md:text-[32px] text-2xl font-semibold">Ticket price</h2>
+          <h2 className="md:text-[32px] text-2xl font-semibold">
+            Ticket price
+          </h2>
           <h3 className="mb-5 md:text-lg text-sm">
             Set the ticket price for your event. You can choose to keep it
             <br /> free or charge a fee based on your event type.
@@ -164,7 +162,9 @@ function CreateEventPage() {
           <label htmlFor="free_checkbox" className="mx-2 text-xl font-semibold">
             Free
           </label>
-          <label htmlFor="ticket_price" className="block mt-5">Set ticket price</label>
+          <label htmlFor="ticket_price" className="block mt-5">
+            Set ticket price
+          </label>
           <input
             type="text"
             placeholder="Amount"
@@ -174,8 +174,12 @@ function CreateEventPage() {
         </div>
 
         <div className="mt-15">
-          <h2 className="md:text-[32px] text-2xl font-semibold">Event Description</h2>
-          <h3 className="mb-5 text-sm md:text-lg">Share more about what the event is about</h3>
+          <h2 className="md:text-[32px] text-2xl font-semibold">
+            Event Description
+          </h2>
+          <h3 className="mb-5 text-sm md:text-lg">
+            Share more about what the event is about
+          </h3>
           <textarea
             placeholder="Enter event description..."
             rows={8} // Adjust number of visible lines
@@ -184,7 +188,9 @@ function CreateEventPage() {
         </div>
         <div className="mt-15">
           <h2 className="md:text-[32px] text-2xl font-semibold">Cover image</h2>
-          <h3 className="mb-5 md:text-lg text-sm">Upload an image to make your event stand out</h3>
+          <h3 className="mb-5 md:text-lg text-sm">
+            Upload an image to make your event stand out
+          </h3>
           <div>
             {/* Hidden input */}
             <input
@@ -206,7 +212,12 @@ function CreateEventPage() {
             </button>
           </div>
         </div>
-        <button type="submit" className="mt-10 mb-30 text-lg font-semibold py-2.5 px-10 bg-yellow-300 rounded-sm cursor-pointer hover:bg-amber-400 transition-colors">Submit</button>
+        <button
+          type="submit"
+          className="mt-10 mb-30 text-lg font-semibold py-2.5 px-10 bg-yellow-300 rounded-sm cursor-pointer hover:bg-amber-400 transition-colors"
+        >
+          Submit
+        </button>
       </form>
     </div>
   );
