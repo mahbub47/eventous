@@ -125,3 +125,7 @@
     background-color: var(--color-yellow-400);
   }
 }
+
+body {
+  font-family: "Poppins", sans-serif;
+}

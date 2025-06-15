@@ -1,4 +1,5 @@
 import { useAuth } from "@/context/AuthContext";
+import ServerErrorPage from "@/pages/ServerErrorPage";
 import api from "@/utils/api";
 import { useState } from "react";
 import { CgProfile } from "react-icons/cg";
@@ -6,28 +7,26 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 function Navbar() {
-  const { isAuthenticated, user, setIsAuthenticated, setUser } = useAuth();
+  const { isAuthenticated, user, setUser, setIsAuthenticated} = useAuth();
   const navigate = useNavigate();
   const [isMenuOpen, setMenuOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const handleLogout = async () => {
     try {
-      const res = await api.get("/api/auth/logout");
-
-      setIsAuthenticated(false);
+      const res = await api.get("/api/auth/logout", { withCredentials: true });
+      toast.success(res.data.message || "Logged out successfully");
+      navigate("/");
       setUser(null);
-
-      toast.success(res.data.message);
-
-      navigate("/signup");
+      setIsAuthenticated(false);
     } catch (error) {
       console.error("Logout failed:", error);
       toast.error("Failed to log out. Please try again.");
+      return <ServerErrorPage/>
     }
   };
   return (
     <div>
-      <header className="flex justify-between items-center text-stone-900 px-8 py-1.5 bg-white border-b-yellow-200 border-2">
+      <header className="flex justify-between items-center text-stone-900 px-8 py-1.5 bg-white border-b-yellow-200 border-2 overflow-clip">
         {/* Common navbar elements */}
         <div className="flex justify-start items-center">
           <a href="/">
@@ -69,7 +68,7 @@ function Navbar() {
             <div className="md:flex justify-self-end hidden items-center">
               <div>
                 <span
-                  className="flex justify-self-end items-center text-stone-900 cursor-pointer"
+                  className="flex justify-self-end items-center text-stone-900 cursor-pointer text-sm"
                   onClick={() => setIsOpen(!isOpen)}
                   onMouseOver={() => setIsOpen(true)}
                   onMouseLeave={() => setIsOpen(false)}
@@ -105,7 +104,6 @@ function Navbar() {
                         Following
                       </a>
                       <a
-                        href=""
                         className="block px-4 py-4 text-md font-semibold text-gray-700 hover:bg-gray-100"
                         onClick={handleLogout}
                       >
@@ -161,9 +159,7 @@ function Navbar() {
 
           {isAuthenticated ? (
             <li className=" text-stone-900 list-none w-full cursor-pointer text-center p-4 hover:bg-amber-300 transition-all ">
-              <a href={"/account-settings"}>
-                Account Settings
-              </a>
+              <a href={"/account-settings"}>Account Settings</a>
             </li>
           ) : (
             <li className=" text-stone-900 list-none w-full cursor-pointer text-center p-4 hover:bg-amber-300 transition-all ">

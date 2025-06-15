@@ -3,6 +3,7 @@ import api from "@/utils/api";
 import { createContext, useContext, useEffect, useState } from "react";
 
 type User = {
+  createdAt?: string;
   _id?: string;
   name?: string;
   email?: string;
@@ -25,52 +26,43 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [user, setUser] = useState<User | null>(null);
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        setIsLoading(true);
-        const res = await api.get("/api/auth/check-auth");
-        setIsAuthenticated(res.data.isAuthenticated);
-        try {
-          const res2 = await api.get(`/api/users/${res.data.userId}`);
-          setUser(res2.data);
-        } catch {
-          setUser(null);
-          setIsAuthenticated(false);
-          console.log("user not logged in");
-        }
-        // setIsLoading(false);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (error: any) {
-        setUser(null);
-        setIsAuthenticated(false);
-        if (error.response?.status === 401) {
-          console.log("user not logged in");
-        }
-      } finally {
-        setIsLoading(false);
+  const checkAuth = async () => {
+    setIsLoading(true);
+    try {
+      const res = await api.get("/api/auth/check-auth");
+      setIsAuthenticated(res.data.isAuthenticated);
+      if (res.data.userId) {
+        const res2 = await api.get(`/api/users/${res.data.userId}`);
+        setUser(res2.data);
       }
-    };
-
+      setIsLoading(false);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      setUser(null);
+      setIsAuthenticated(false);
+      if (error.response?.status === 401) {
+        console.log("user not logged in");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  useEffect(() => {
     checkAuth();
-  }, [isAuthenticated]);
+  }, []);
+
+  const value = {
+    user,
+    setUser,
+    isLoading,
+    setIsLoading,
+    isAuthenticated,
+    setIsAuthenticated,
+  };
 
   if (isLoading) return <LoadingPage />;
 
-  return (
-    <AuthContext.Provider
-      value={{
-        user,
-        setUser,
-        isLoading,
-        setIsLoading,
-        isAuthenticated,
-        setIsAuthenticated,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 // eslint-disable-next-line react-refresh/only-export-components

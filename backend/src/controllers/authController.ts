@@ -135,7 +135,6 @@ export const verifyOTP: RequestHandler = async (req, res) => {
           role: "attendee",
         });
       }
-      console.log("THIS IS MY OTP VERIFIED USER: ", user);
       const jwtSecret = process.env.JWT_SECRET || "secret123!";
       const jwtExpiry = process.env.JWT_EXPIRES_IN || "1d";
 
@@ -165,23 +164,21 @@ export const verifyOTP: RequestHandler = async (req, res) => {
 
 export const logout: RequestHandler = async (req, res, next) => {
   try {
-    res.cookie("token", "", {
+    res.clearCookie("token", {
       httpOnly: true,
-      expires: new Date(0),
-      path: "/",
+      secure: false,
+      sameSite: "lax",
     });
     console.log("USER LOGGED OUT SUCCESSFULLY!!!");
-    res.json({ message: "Logged out successfully" });
+    res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
     next(error);
   }
 };
 
-
 export const checkAuth: RequestHandler = (req, res, next) => {
   try {
     const user = (req as AuthenticatedRequest).user;
-    console.log("THIS IS USER FROM BACKEND AUTH:", user._id);
     res.json({
       message: "You are authenticated",
       userId: user._id,
@@ -189,7 +186,7 @@ export const checkAuth: RequestHandler = (req, res, next) => {
     });
     return;
   } catch (error) {
-    console.log("THE PROBLEM IS HERE!!!", error);
+    console.log("CHECK AUTH ERROR!!!", error);
     next(error);
   }
 };
