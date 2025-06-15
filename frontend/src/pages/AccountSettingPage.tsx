@@ -1,16 +1,17 @@
-import { useAuth } from "@/context/AuthContext";
-import { useEffect, useRef } from "react";
 import { CgProfile } from "react-icons/cg";
-import { useNavigate } from "react-router-dom";
+import { useRef } from "react";
+import { useAuth } from "@/context/AuthContext";
 
 function AccountSettingPage() {
-  const { isAuthenticated } = useAuth();
-  const navigate = useNavigate();
-  useEffect(() => {
-    if (!isAuthenticated) {
-      navigate("/login");
-    }
-  });
+  const { user } = useAuth();
+
+  const formattedDate = user?.createdAt
+    ? new Date(user.createdAt).toLocaleDateString("en-GB", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })
+    : "Date not available";
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -22,9 +23,9 @@ function AccountSettingPage() {
     const file = e.target.files?.[0];
     if (file) {
       console.log("Selected file:", file);
-      // Do something with the file (e.g., upload or preview)
     }
   };
+
   return (
     <div className="min-h-screen text-stone-900">
       <form action="" className="mx-10 lg:mx-[25%] md:mx-[10%] md:mt-30 mt-10">
@@ -34,7 +35,7 @@ function AccountSettingPage() {
           </h1>
           <hr />
           <p className="text-sm font-normal text-gray-400">
-            Eventous account since 20 april, 2025
+            Eventous account since {formattedDate}
           </p>
           <div className="mt-10">
             <div>

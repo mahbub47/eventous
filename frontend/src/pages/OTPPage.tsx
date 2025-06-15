@@ -4,6 +4,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "@/context/AuthContext";
 import api from "@/utils/api";
+import ServerErrorPage from "./ServerErrorPage";
+import UnauthorizedErrorPage from "./UnauthorizedErrorPage";
+import UserDashboard from "./UserDashboard";
 
 function OTPPage() {
   const { setUser } = useAuth();
@@ -35,14 +38,16 @@ function OTPPage() {
       );
       setUser(res.data.user);
       toast.success(res.data.message);
-      navigate("/user-dashboard");
+      return <UserDashboard />
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       if (error.response?.status === 410) {
         toast.error("Your OTP has expired.");
+        return <UnauthorizedErrorPage/>
       } else {
         toast.error(error.response?.data.message || "Something went wrong");
+        return <ServerErrorPage/>
       }
     }
   };

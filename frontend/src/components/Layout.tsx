@@ -1,18 +1,13 @@
-import { Outlet } from "react-router-dom";
 import Footer from "./Footer";
 import Navbar from "./Navbar";
 
-function Layout() {
+function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <>
-      <div className="bg-white w-full min-h-[100vh] absolute">
-        <Navbar />
-        <main>
-          <Outlet />
-        </main>
-        <Footer />
-      </div>
-    </>
+    <div className="bg-white w-full min-h-[100vh] absolute">
+      <Navbar />
+      <main>{children}</main>
+      <Footer />
+    </div>
   );
 }
 
