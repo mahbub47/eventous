@@ -57,7 +57,7 @@ function Navbar() {
             <div className="flex justify-center items-center px-4">
               <i className="bx bx-heart text-red-600"></i>
               <a
-                href={isAuthenticated ? "/contact" : "/login"}
+                href={isAuthenticated ? "/liked-events" : "/login"}
                 className="text-md font-semibold text-stone-900 py-1.5 px-1"
               >
                 Likes
