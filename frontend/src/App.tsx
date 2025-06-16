@@ -17,6 +17,7 @@ import "react-toastify/dist/ReactToastify.css";
 import LoadingPage from "./pages/LoadingPage";
 import AccountSettingPage from "./pages/AccountSettingPage";
 import { ProtectedRoute } from "./routes/ProtectedRoute";
+import LikedEventsPage from "./pages/LikedEventsPage";
 
 export const GoogleAuthWrapper = () => {
   const clientId =
@@ -92,6 +93,16 @@ function App() {
               <ProtectedRoute>
                 <Layout>
                   <AccountSettingPage />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/liked-events"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <LikedEventsPage />
                 </Layout>
               </ProtectedRoute>
             }

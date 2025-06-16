@@ -1,3 +1,4 @@
+import eventImage from "../assets/orpheus.jpg"
 type EventCardProps = {
   title: string;
   date: string;
@@ -8,7 +9,7 @@ type EventCardProps = {
 function EventCard({ title, date, location, imageUrl }: EventCardProps) {
   return (
     <div className="w-full max-w-sm bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
-      <img src={imageUrl} alt={title} className="w-full h-48 object-cover" />
+      <img src={eventImage} alt={imageUrl} className="w-full h-48 object-cover" />
       <div className="p-5">
         <h2 className="text-xl font-semibold mb-2">{title}</h2>
         <p className="text-sm text-gray-600 mb-1">{date}</p>
