@@ -5,6 +5,7 @@ import morgan from "morgan";
 import eventRoutes from "./routes/eventRoutes";
 import authRoutes from "./routes/authRoutes";
 import userRoutes from "./routes/userRoutes"
+import reportRoute from "./routes/reportRoutes"
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
@@ -28,6 +29,8 @@ app.use("/api/events", eventRoutes);
 app.use("/api/auth", authRoutes);
 
 app.use("/api/users", userRoutes);
+
+app.use("/api/contact", reportRoute);
 
 app.use((req: Request, res, next) => {
   next(createHttpError(404, "Endpoint not found"));
