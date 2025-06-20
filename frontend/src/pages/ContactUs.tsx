@@ -1,24 +1,31 @@
 import { useAuth } from "@/context/AuthContext";
 import api from "@/utils/api";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-type FormFields = {
-  username: string;
-  email: string;
-  message: string;
-};
+import { z } from "zod";
+
+const schema = z.object({
+  username: z.string().min(1, "Please enter your name"),
+  email: z.string().min(1, "Please enter your email").email("Please enter a valid email"),
+  message: z.string().min(1, "Please enter your message"),
+});
+type FormFields = z.infer<typeof schema>;
+
 function ContactUs() {
+
   const { user } = useAuth();
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm<FormFields>({
     defaultValues: {
       username: user?.name || "",
       email: user?.email || "",
     },
+    resolver: zodResolver(schema),
   });
 
   const onSubmit: SubmitHandler<FormFields> = async (data) => {
@@ -32,12 +39,11 @@ function ContactUs() {
         message,
       });
       toast.success(res.data.message);
-      data.username = "";
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      console.log("Something went wrong, ", error);
-      toast.success(error.data.message);
+      setError("root", {message: "Server is busy, Please try again after some time."});
+      toast.error(error.response.data?.error);
     }
   };
   return (
@@ -56,7 +62,7 @@ function ContactUs() {
             Your Name
           </label>
           <input
-            {...register("username", { required: "Please enter your name" })}
+            {...register("username")}
             type="text"
             id="username"
             placeholder="Enter your name"
@@ -71,13 +77,7 @@ function ContactUs() {
             Your Email
           </label>
           <input
-            {...register("email", {
-              required: "Please enter your email",
-              pattern: {
-                value: emailRegex,
-                message: "Please enter a valid email",
-              },
-            })}
+            {...register("email")}
             type="email"
             id="email"
             name="email"
@@ -93,7 +93,7 @@ function ContactUs() {
             Message
           </label>
           <textarea
-            {...register("message", { required: "Please enter your message" })}
+            {...register("message")}
             id="message"
             placeholder="Write your message here"
             className="w-full border border-gray-300 rounded-sm px-4 py-2 h-32 resize-none focus:outline-none focus:ring-2 focus:ring-yellow-300"
@@ -109,6 +109,9 @@ function ContactUs() {
         >
           {isSubmitting ? "Loading" : "Send Message"}
         </button>
+        {errors.root && (
+            <p className="text-red-500 text-sm">{errors.root.message}</p>
+          )}
       </form>
 
       <div className="mt-10 text-sm text-gray-600">

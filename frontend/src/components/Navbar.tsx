@@ -73,7 +73,18 @@ function Navbar() {
                   onMouseOver={() => setIsOpen(true)}
                   onMouseLeave={() => setIsOpen(false)}
                 >
-                  <CgProfile className="w-6 h-6 pr-1" />
+                  {user?.profileImage ? (
+                    <>
+                      <img
+                        src={`http://localhost:5000${user.profileImage}`}
+                        alt="Profile Image"
+                        className="w-6 h-6 object-cover rounded-full"
+                      />
+                    </>
+                  ) : (
+                    <CgProfile className="w-6 h-6" />
+                  )}
+
                   <div className="max-w-50 overflow-clip box-border p-3">
                     {user?.email || "guest@gmail"}
                   </div>
