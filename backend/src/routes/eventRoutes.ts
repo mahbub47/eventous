@@ -1,5 +1,7 @@
 import express from "express";
 import * as EventController from "../controllers/eventController";
+import { verifyToken } from "../middleware/verifyToken";
+import eventCoverUpload from "../middleware/eventCoverImageStorage";
 
 const router = express.Router();
 
@@ -7,7 +9,12 @@ router.get("/", EventController.getEvents);
 
 router.get("/:eventID", EventController.getEvent);
 
-router.post("/", EventController.createEvent);
+router.post(
+  "/",
+  eventCoverUpload.single("eventCoverImage"),
+  verifyToken,
+  EventController.createEvent
+);
 
 router.patch("/:eventID", EventController.updateEvent);
 

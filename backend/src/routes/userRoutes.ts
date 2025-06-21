@@ -1,6 +1,6 @@
 import express from "express";
 import * as UserController from "../controllers/userController";
-import upload from "../middleware/multer";
+import profileUpload from "../middleware/profileImageStorage";
 import { verifyToken } from "../middleware/verifyToken";
 
 const router = express.Router();
@@ -8,7 +8,7 @@ const router = express.Router();
 router.get("/:userId", UserController.getUser);
 router.patch(
   "/:userId",
-  upload.single("profileImage"),
+  profileUpload.single("profileImage"),
   verifyToken,
   UserController.updateUser
 );

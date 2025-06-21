@@ -90,7 +90,7 @@ export const updateUser: RequestHandler<
     }
 
     if (req.file) {
-      user.profileImage = `/uploads/${req.file.filename}`;
+      user.profileImage = `/uploads/profile-images/${req.file.filename}`;
     }
 
     const updatedUser = await user.save();
