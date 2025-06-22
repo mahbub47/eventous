@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 function Navbar() {
-  const { isAuthenticated, user, setUser, setIsAuthenticated} = useAuth();
+  const { isAuthenticated, user, setUser, setIsAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [isMenuOpen, setMenuOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -21,7 +21,7 @@ function Navbar() {
     } catch (error) {
       console.error("Logout failed:", error);
       toast.error("Failed to log out. Please try again.");
-      return <ServerErrorPage/>
+      return <ServerErrorPage />;
     }
   };
   return (
@@ -73,7 +73,18 @@ function Navbar() {
                   onMouseOver={() => setIsOpen(true)}
                   onMouseLeave={() => setIsOpen(false)}
                 >
-                  <CgProfile className="w-6 h-6 pr-1" />
+                  {user?.profileImage ? (
+                    <>
+                      <img
+                        src={`http://localhost:5000${user.profileImage}`}
+                        alt="Profile Image"
+                        className="w-6 h-6 object-cover rounded-full"
+                      />
+                    </>
+                  ) : (
+                    <CgProfile className="w-6 h-6" />
+                  )}
+
                   <div className="max-w-50 overflow-clip box-border p-3">
                     {user?.email || "guest@gmail"}
                   </div>
@@ -118,14 +129,12 @@ function Navbar() {
             <div className="md:flex justify-self-end hidden">
               <a
                 href={"/login"}
-                target="_blank"
                 className="text-lg font-semibold py-1.5 px-3 mx-5 cursor-pointer hover:underline"
               >
                 Login
               </a>
               <a
                 href={"/signup"}
-                target="_blank"
                 className="text-lg text-stone-900 font-semibold py-1.5 px-5 bg-yellow-300 rounded-sm cursor-pointer hover:bg-amber-400 transition-colors"
               >
                 Signup
@@ -147,14 +156,10 @@ function Navbar() {
           style={{ transition: "transform 0.3 ease, opacity 0.3 ease" }}
         >
           <li className=" text-stone-900 list-none w-full cursor-pointer text-center p-4 hover:bg-amber-300 transition-all ">
-            <a href={"/signup"} target="_blank">
-              Create event
-            </a>
+            <a href={"/signup"}>Create event</a>
           </li>
           <li className="text-stone-900 list-none w-full cursor-pointer text-center p-4 hover:bg-amber-300 transition-all ">
-            <a href={"/signup"} target="_blank">
-              Likes
-            </a>
+            <a href={"/signup"}>Likes</a>
           </li>
 
           {isAuthenticated ? (
@@ -163,9 +168,7 @@ function Navbar() {
             </li>
           ) : (
             <li className=" text-stone-900 list-none w-full cursor-pointer text-center p-4 hover:bg-amber-300 transition-all ">
-              <a href={"/signup"} target="_blank">
-                Signup/login
-              </a>
+              <a href={"/signup"}>Signup/login</a>
             </li>
           )}
         </div>

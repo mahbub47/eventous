@@ -1,4 +1,51 @@
+import { useAuth } from "@/context/AuthContext";
+import api from "@/utils/api";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import { z } from "zod";
+
+const schema = z.object({
+  username: z.string().min(1, "Please enter your name"),
+  email: z.string().min(1, "Please enter your email").email("Please enter a valid email"),
+  message: z.string().min(1, "Please enter your message"),
+});
+type FormFields = z.infer<typeof schema>;
+
 function ContactUs() {
+
+  const { user } = useAuth();
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<FormFields>({
+    defaultValues: {
+      username: user?.name || "",
+      email: user?.email || "",
+    },
+    resolver: zodResolver(schema),
+  });
+
+  const onSubmit: SubmitHandler<FormFields> = async (data) => {
+    const username = data.username;
+    const email = data.email;
+    const message = data.message;
+    try {
+      const res = await api.post("/api/contact/send", {
+        username,
+        email,
+        message,
+      });
+      toast.success(res.data.message);
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      setError("root", {message: "Server is busy, Please try again after some time."});
+      toast.error(error.response.data?.error);
+    }
+  };
   return (
     <div className="w-full px-6 md:px-[20%] py-10 md:py-20 bg-white text-stone-900">
       <h1 className="text-3xl md:text-6xl font-normal mb-6 bg-yellow-300 lg:text-[94px]/24 text-stone-900">
@@ -9,45 +56,62 @@ function ContactUs() {
         you! Fill out the form below or reach out through email.
       </p>
 
-      <form className="flex flex-col gap-6">
+      <form className="flex flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
         <div>
-          <label htmlFor="name" className="block mb-1 font-semibold">
+          <label htmlFor="username" className="block mb-1 font-semibold">
             Your Name
           </label>
           <input
+            {...register("username")}
             type="text"
-            id="name"
+            id="username"
             placeholder="Enter your name"
             className="w-full border border-gray-300 rounded-sm px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-300"
           />
+          {errors.username && (
+            <p className="text-red-500 text-sm">{errors.username.message}</p>
+          )}
         </div>
         <div>
           <label htmlFor="email" className="block mb-1 font-semibold">
             Your Email
           </label>
           <input
+            {...register("email")}
             type="email"
             id="email"
+            name="email"
             placeholder="Enter your email"
             className="w-full border border-gray-300 rounded-sm px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-300"
           />
+          {errors.email && (
+            <p className="text-red-500 text-sm">{errors.email.message}</p>
+          )}
         </div>
         <div>
           <label htmlFor="message" className="block mb-1 font-semibold">
             Message
           </label>
           <textarea
+            {...register("message")}
             id="message"
             placeholder="Write your message here"
             className="w-full border border-gray-300 rounded-sm px-4 py-2 h-32 resize-none focus:outline-none focus:ring-2 focus:ring-yellow-300"
           ></textarea>
+          {errors.message && (
+            <p className="text-red-500 text-sm">{errors.message.message}</p>
+          )}
         </div>
         <button
+          disabled={isSubmitting}
           type="submit"
           className="bg-yellow-300 hover:bg-yellow-400 transition-colors text-stone-900 font-semibold py-2.5 px-10 rounded-sm cursor-pointer"
         >
-          Send Message
+          {isSubmitting ? "Loading" : "Send Message"}
         </button>
+        {errors.root && (
+            <p className="text-red-500 text-sm">{errors.root.message}</p>
+          )}
       </form>
 
       <div className="mt-10 text-sm text-gray-600">
@@ -56,7 +120,7 @@ function ContactUs() {
           href="mailto:eventous.team@example.com"
           className="text-yellow-400 underline"
         >
-          eventous.team@example.com
+          eventous.help@gmail.com
         </a>
       </div>
     </div>

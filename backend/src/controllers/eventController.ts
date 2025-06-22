@@ -2,6 +2,7 @@ import { RequestHandler } from "express";
 import createHttpError from "http-errors";
 import mongoose from "mongoose";
 import eventModel from "../models/eventModel";
+import { AuthenticatedRequest } from "../types/authenticationRequest";
 
 export const getEvents: RequestHandler = async (req, res, next) => {
   try {
@@ -9,7 +10,7 @@ export const getEvents: RequestHandler = async (req, res, next) => {
     if (!events) {
       throw createHttpError(404, "No event found");
     }
-    res.status(200).json(events);
+    res.status(200).json({ events: events });
   } catch (error) {
     next(error);
   }
@@ -32,13 +33,15 @@ export const getEvent: RequestHandler = async (req, res, next) => {
 };
 
 interface CreateEventBody {
-  title?: string;
-  subtitle?: string;
-  date?: Date;
-  time?: string;
-  location?: string;
-  description?: string;
-  price?: number;
+  eventTitle?: string;
+  eventSubtitle?: string;
+  eventDate?: string;
+  eventStartTime?: string;
+  eventEndTime?: string;
+  eventLocation?: string;
+  eventDescription?: string;
+  eventPrice?: string;
+  createdBy?: string;
 }
 
 export const createEvent: RequestHandler<
@@ -47,28 +50,37 @@ export const createEvent: RequestHandler<
   CreateEventBody,
   unknown
 > = async (req, res, next) => {
-  const title = req.body.title;
-  const subtitle = req.body.subtitle;
-  const date = req.body.date;
-  const time = req.body.time;
-  const location = req.body.location;
-  const description = req.body.description;
-  const price = req.body.price;
+  const userId = (req as AuthenticatedRequest).user._id;
+  const {
+    eventTitle,
+    eventSubtitle,
+    eventDate,
+    eventStartTime,
+    eventEndTime,
+    eventLocation,
+    eventPrice,
+    eventDescription,
+  } = req.body;
 
   try {
-    if (!title || !location || !description || !price) {
+    if (!eventTitle || !eventLocation || !eventDescription || !eventPrice) {
       throw createHttpError(400, "Invalid Request");
     }
     const newEvent = await eventModel.create({
-      title: title,
-      subtitle: subtitle,
-      date: date,
-      time: time,
-      location: location,
-      description: description,
-      price: price,
+      eventTitle: eventTitle,
+      eventSubtitle: eventSubtitle,
+      eventDate: eventDate,
+      eventStartTime: eventStartTime,
+      eventEndTime: eventEndTime,
+      eventLocation: eventLocation,
+      eventDescription: eventDescription,
+      eventPrice: eventPrice,
+      createdBy: userId,
+      eventCoverImage: `/uploads/event-covers/${req.file?.filename}`,
     });
-    res.status(201).json(newEvent);
+    res
+      .status(201)
+      .json({ message: "Event created successfully", event: newEvent });
   } catch (error) {
     next(error);
   }
@@ -81,11 +93,12 @@ interface UpdateEventParams {
 interface UpdateEventBody {
   title?: string;
   subtitle?: string;
-  date?: Date;
-  time?: string;
+  date?: string;
+  startTime?: string;
+  endTime?: string;
   location?: string;
   description?: string;
-  price?: number;
+  price?: string;
 }
 
 export const updateEvent: RequestHandler<
@@ -94,24 +107,23 @@ export const updateEvent: RequestHandler<
   UpdateEventBody,
   unknown
 > = async (req, res, next) => {
-
   const eventId = req.params.eventID;
 
   const newTitle = req.body.title;
   const newSubtitle = req.body.subtitle;
   const newDate = req.body.date;
-  const newTime = req.body.time;
-  const newLocation = req.body.location;
+  const newStartTime = req.body.startTime;
+  const newEndTime = req.body.startTime;
+  const newEventLocation = req.body.location;
   const newDescription = req.body.description;
   const newPrice = req.body.price;
 
   try {
-
     if (!mongoose.isValidObjectId(eventId)) {
       throw createHttpError(400, "Invalid event id");
     }
 
-    if (!newTitle || !newLocation || !newDescription || !newPrice) {
+    if (!newTitle || !newEventLocation || !newDescription || !newPrice) {
       throw createHttpError(400, "Invalid Request");
     }
 
@@ -121,13 +133,14 @@ export const updateEvent: RequestHandler<
       throw createHttpError(404, "Event not found");
     }
 
-    event.title = newTitle;
-    event.subtitle = newSubtitle;
-    event.date = newDate;
-    event.time = newTime;
-    event.location = newLocation;
-    event.description = newDescription;
-    event.price = newPrice;
+    event.eventTitle = newTitle;
+    event.eventSubtitle = newSubtitle;
+    event.eventDate = newDate;
+    event.eventStartTime = newStartTime;
+    event.eventEndTime = newEndTime;
+    event.eventLocation = newEventLocation;
+    event.eventDescription = newDescription;
+    event.eventPrice = newPrice;
 
     const updatedEvent = await event.save();
 

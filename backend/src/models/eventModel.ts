@@ -1,13 +1,16 @@
 import { InferSchemaType, model, Schema } from "mongoose";
 
 const eventSchema = new Schema({
-    title: { type: String, required: true},
-    subtitle: {type: String, required: false},
-    date: {type: Date, require: false},
-    time: {type: String, required: false},
-    location: {type: String, required: true},
-    description: {type: String, required: true},
-    price: {type: Number, required: true}
+    eventCoverImage: {type: String, required: true},
+    eventTitle: { type: String, required: true},
+    eventSubtitle: {type: String, required: false},
+    eventDate: {type: String, require: true},
+    eventStartTime: {type: String, required: false},
+    eventEndTime: {type: String, required: false},
+    eventLocation: {type: String, required: true},
+    eventDescription: {type: String, required: true},
+    eventPrice: {type: String, required: true},
+    createdBy: {type: String, required: true}
 }, {timestamps: true});
 
 type Event = InferSchemaType<typeof eventSchema>;

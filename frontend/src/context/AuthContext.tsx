@@ -8,6 +8,15 @@ type User = {
   name?: string;
   email?: string;
   role?: string;
+  phone?: string;
+  jobTitle?: string;
+  organization?: string;
+  profileImage?: string;
+  website?: string;
+  address?: string;
+  address2?: string;
+  city?: string;
+  zip?: string;
 };
 
 interface AuthContextType {
