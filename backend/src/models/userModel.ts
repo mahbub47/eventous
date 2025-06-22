@@ -14,7 +14,7 @@ const userSchema = new Schema({
       type: String,
       enum: ['attendee', 'organizer'],
     },
-    picture: {
+    profileImage: {
       type: String,
     },
     phone: {

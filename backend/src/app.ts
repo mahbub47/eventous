@@ -4,9 +4,11 @@ import createHttpError, { isHttpError } from "http-errors";
 import morgan from "morgan";
 import eventRoutes from "./routes/eventRoutes";
 import authRoutes from "./routes/authRoutes";
-import userRoutes from "./routes/userRoutes"
+import userRoutes from "./routes/userRoutes";
+import reportRoute from "./routes/reportRoutes";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import path from "path";
 
 const app = express();
 
@@ -23,11 +25,15 @@ app.use(morgan("dev"));
 
 app.use(express.json());
 
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+
 app.use("/api/events", eventRoutes);
 
 app.use("/api/auth", authRoutes);
 
 app.use("/api/users", userRoutes);
+
+app.use("/api/contact", reportRoute);
 
 app.use((req: Request, res, next) => {
   next(createHttpError(404, "Endpoint not found"));
