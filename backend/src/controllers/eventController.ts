@@ -10,7 +10,7 @@ export const getEvents: RequestHandler = async (req, res, next) => {
     if (!events) {
       throw createHttpError(404, "No event found");
     }
-    res.status(200).json(events);
+    res.status(200).json({ events: events });
   } catch (error) {
     next(error);
   }
@@ -33,7 +33,6 @@ export const getEvent: RequestHandler = async (req, res, next) => {
 };
 
 interface CreateEventBody {
-
   eventTitle?: string;
   eventSubtitle?: string;
   eventDate?: string;
@@ -77,9 +76,11 @@ export const createEvent: RequestHandler<
       eventDescription: eventDescription,
       eventPrice: eventPrice,
       createdBy: userId,
-      eventCoverImage: `/uploads/event-covers/${req.file?.filename}`
+      eventCoverImage: `/uploads/event-covers/${req.file?.filename}`,
     });
-    res.status(201).json({message: "Event created successfully", event: newEvent});
+    res
+      .status(201)
+      .json({ message: "Event created successfully", event: newEvent });
   } catch (error) {
     next(error);
   }
