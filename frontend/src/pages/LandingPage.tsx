@@ -7,6 +7,20 @@ import { useEventContext } from "@/context/EventContext";
 import LoadingPage from "./LoadingPage";
 function LandingPage() {
   const { events, isLoading } = useEventContext();
+
+  const eventsInDhaka = events
+    .filter((event) => event.eventLocation.toLowerCase().includes("dhaka"))
+    .slice(0, 4);
+
+  const upcomingEvents = events
+    .filter(
+      (event) =>
+        event.eventTitle.toLowerCase().includes("workshop") ||
+        (event.eventSubtitle &&
+          event.eventSubtitle.toLowerCase().includes("workshop"))
+    )
+    .slice(0, 8);
+
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
 
@@ -47,7 +61,7 @@ function LandingPage() {
       <div className="w-8/12 mx-auto mt-18 md:mb-30 mb-10">
         <h1 className="text-xl mb-3">Events in Dhaka</h1>
         <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 grid-rows-1 gap-5">
-          {events.map((event) => (
+          {eventsInDhaka.map((event) => (
             <EventCard
               key={event._id}
               title={event.eventTitle}
@@ -62,7 +76,7 @@ function LandingPage() {
       <div className="w-8/12 mx-auto mt-10 md:mb-50 mb-10">
         <h1 className="text-xl mb-3">Upcoming workshops</h1>
         <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 grid-rows-1 gap-5">
-          {events.map((event) => (
+          {upcomingEvents.map((event) => (
             <EventCard
               key={event._id}
               title={event.eventTitle}
