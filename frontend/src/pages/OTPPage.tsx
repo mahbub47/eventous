@@ -6,10 +6,9 @@ import { useAuth } from "@/context/AuthContext";
 import api from "@/utils/api";
 import ServerErrorPage from "./ServerErrorPage";
 import UnauthorizedErrorPage from "./UnauthorizedErrorPage";
-import UserDashboard from "./UserDashboard";
 
 function OTPPage() {
-  const { setUser } = useAuth();
+  const { setUser, setIsAuthenticated } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const user = location.state?.user;
@@ -29,25 +28,23 @@ function OTPPage() {
 
   const handleVerify = async () => {
     try {
-      const res = await api.post(
-        "/api/auth/verify-otp",
-        {
-          email,
-          otp,
-        }
-      );
+      const res = await api.post("/api/auth/verify-otp", {
+        email,
+        otp,
+      });
       setUser(res.data.user);
       toast.success(res.data.message);
-      return <UserDashboard />
+      setIsAuthenticated(true);
+      navigate("/");
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       if (error.response?.status === 410) {
         toast.error("Your OTP has expired.");
-        return <UnauthorizedErrorPage/>
+        return <UnauthorizedErrorPage />;
       } else {
         toast.error(error.response?.data.message || "Something went wrong");
-        return <ServerErrorPage/>
+        return <ServerErrorPage />;
       }
     }
   };
