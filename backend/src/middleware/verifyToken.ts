@@ -1,29 +1,23 @@
-import jwt from 'jsonwebtoken';
-import { Request, Response, NextFunction } from 'express';
+import jwt from "jsonwebtoken";
+import { RequestHandler } from "express";
+import { AuthenticatedRequest } from "../types/authenticationRequest";
 
-interface AuthenticatedRequest extends Request {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  user?: any;
-}
-
-export const verifyToken = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-  const authHeader = req.headers.authorization;
-  const token = authHeader && authHeader.split(' ')[1]; // "Bearer TOKEN"
+export const verifyToken: RequestHandler = (req, res, next) => {
+  const token = req.cookies.token;
 
   if (!token) {
-    res.status(401).json({ message: 'No token provided' });
+    res.status(401).json({ message: "No token provided", tokenProvided: false });
     console.log("NO TOKEN PROVIDED!!!");
     return;
   }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!);
-    req.user = decoded;
-    console.log("DONE!!!");
+    (req as AuthenticatedRequest).user = decoded;
     next();
     return;
   } catch (err) {
-    res.status(403).json({ message: 'Invalid token', error: err});
+    res.status(403).json({ message: "Invalid token", error: err });
     console.log("INVALID TOKEN!!!");
     return;
   }

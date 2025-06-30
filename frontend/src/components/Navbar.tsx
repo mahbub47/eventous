@@ -1,23 +1,32 @@
 import { useAuth } from "@/context/AuthContext";
+import ServerErrorPage from "@/pages/ServerErrorPage";
+import api from "@/utils/api";
 import { useState } from "react";
 import { CgProfile } from "react-icons/cg";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function Navbar() {
-  const { user } = useAuth();
+  const { isAuthenticated, user, setUser, setIsAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [isMenuOpen, setMenuOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-
-    localStorage.removeItem("user-info");
-
-    navigate("/signup");
+  const handleLogout = async () => {
+    try {
+      const res = await api.get("/api/auth/logout", { withCredentials: true });
+      toast.success(res.data.message || "Logged out successfully");
+      navigate("/");
+      setUser(null);
+      setIsAuthenticated(false);
+    } catch (error) {
+      console.error("Logout failed:", error);
+      toast.error("Failed to log out. Please try again.");
+      return <ServerErrorPage />;
+    }
   };
   return (
     <div>
-      <header className="flex justify-between items-center text-stone-900 px-8 py-1.5 bg-white border-b-yellow-200 border-2">
+      <header className="flex justify-between items-center text-stone-900 px-8 py-1.5 bg-white border-b-yellow-200 border-2 overflow-clip">
         {/* Common navbar elements */}
         <div className="flex justify-start items-center">
           <a href="/">
@@ -39,7 +48,7 @@ function Navbar() {
             <div className="flex justify-center items-center px-4">
               <i className="bx bx-plus text-red-600 text-md"></i>
               <a
-                href={user ? "/create-event" : "/login"}
+                href={isAuthenticated ? "/create-event" : "/login"}
                 className="text-md font-semibold text-stone-900 py-1.5 px-0.5 underline"
               >
                 Create
@@ -48,48 +57,65 @@ function Navbar() {
             <div className="flex justify-center items-center px-4">
               <i className="bx bx-heart text-red-600"></i>
               <a
-                href={user ? "/contact" : "/login"}
+                href={isAuthenticated ? "/liked-events" : "/login"}
                 className="text-md font-semibold text-stone-900 py-1.5 px-1"
               >
                 Likes
               </a>
             </div>
           </div>
-          {user ? (
+          {isAuthenticated ? (
             <div className="md:flex justify-self-end hidden items-center">
               <div>
                 <span
-                  className="flex justify-self-end justify-center items-center text-stone-900 cursor-pointer"
+                  className="flex justify-self-end items-center text-stone-900 cursor-pointer text-sm"
                   onClick={() => setIsOpen(!isOpen)}
-                  onMouseOver={() => setIsOpen(!isOpen)}
+                  onMouseOver={() => setIsOpen(true)}
+                  onMouseLeave={() => setIsOpen(false)}
                 >
-                  <CgProfile className="w-6 h-6 pr-1" />
-                  {user.email}
+                  {user?.profileImage ? (
+                    <>
+                      <img
+                        src={`http://localhost:5000${user.profileImage}`}
+                        alt="Profile Image"
+                        className="w-6 h-6 object-cover rounded-full"
+                      />
+                    </>
+                  ) : (
+                    <CgProfile className="w-6 h-6" />
+                  )}
+
+                  <div className="max-w-50 overflow-clip box-border p-3">
+                    {user?.email || "guest@gmail"}
+                  </div>
                 </span>
                 {isOpen && (
-                  <div className="absolute mt-2 w-50 shadow-xl bg-white z-10">
+                  <div
+                    onMouseOver={() => setIsOpen(true)}
+                    onMouseLeave={() => setIsOpen(false)}
+                    className="absolute w-56 shadow-xl bg-white z-10"
+                  >
                     <div className="py-1">
                       <a
-                        href=""
-                        className="block px-4 py-2 text-md text-gray-700 hover:bg-gray-100"
+                        href="/account-settings"
+                        className="block px-4 py-4 text-md font-semibold text-gray-700 hover:bg-gray-100"
                       >
-                        Profile
+                        Account Settings
                       </a>
                       <a
                         href=""
-                        className="block px-4 py-2 text-md text-gray-700 hover:bg-gray-100"
+                        className="block px-4 py-4 text-md font-semibold text-gray-700 hover:bg-gray-100"
                       >
                         My Events
                       </a>
                       <a
                         href=""
-                        className="block px-4 py-2 text-md text-gray-700 hover:bg-gray-100"
+                        className="block px-4 py-4 text-md font-semibold text-gray-700 hover:bg-gray-100"
                       >
-                        Settings
+                        Following
                       </a>
                       <a
-                        href=""
-                        className="block px-4 py-2 text-md text-gray-700 hover:bg-gray-100"
+                        className="block px-4 py-4 text-md font-semibold text-gray-700 hover:bg-gray-100"
                         onClick={handleLogout}
                       >
                         Logout
@@ -103,14 +129,12 @@ function Navbar() {
             <div className="md:flex justify-self-end hidden">
               <a
                 href={"/login"}
-                target="_blank"
                 className="text-lg font-semibold py-1.5 px-3 mx-5 cursor-pointer hover:underline"
               >
                 Login
               </a>
               <a
                 href={"/signup"}
-                target="_blank"
                 className="text-lg text-stone-900 font-semibold py-1.5 px-5 bg-yellow-300 rounded-sm cursor-pointer hover:bg-amber-400 transition-colors"
               >
                 Signup
@@ -132,27 +156,19 @@ function Navbar() {
           style={{ transition: "transform 0.3 ease, opacity 0.3 ease" }}
         >
           <li className=" text-stone-900 list-none w-full cursor-pointer text-center p-4 hover:bg-amber-300 transition-all ">
-            <a href={"/signup"} target="_blank">
-              Create event
-            </a>
+            <a href={"/signup"}>Create event</a>
           </li>
           <li className="text-stone-900 list-none w-full cursor-pointer text-center p-4 hover:bg-amber-300 transition-all ">
-            <a href={"/signup"} target="_blank">
-              Likes
-            </a>
+            <a href={"/signup"}>Likes</a>
           </li>
 
-          {user ? (
+          {isAuthenticated ? (
             <li className=" text-stone-900 list-none w-full cursor-pointer text-center p-4 hover:bg-amber-300 transition-all ">
-              <a href={"/signup"} target="_blank">
-                Profile
-              </a>
+              <a href={"/account-settings"}>Account Settings</a>
             </li>
           ) : (
             <li className=" text-stone-900 list-none w-full cursor-pointer text-center p-4 hover:bg-amber-300 transition-all ">
-              <a href={"/signup"} target="_blank">
-                Signup/login
-              </a>
+              <a href={"/signup"}>Signup/login</a>
             </li>
           )}
         </div>

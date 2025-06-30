@@ -1,12 +1,14 @@
 import { useState } from "react";
-import bgImage from "../assets/signup-bg.jpg";
-import axios from "axios";
+import bgImage from "@/assets/signup-bg.jpg";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAuth } from "@/context/AuthContext";
+import api from "@/utils/api";
+import ServerErrorPage from "./ServerErrorPage";
+import UnauthorizedErrorPage from "./UnauthorizedErrorPage";
 
 function OTPPage() {
-  const { setUser } = useAuth();
+  const { setUser, setIsAuthenticated } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const user = location.state?.user;
@@ -26,34 +28,30 @@ function OTPPage() {
 
   const handleVerify = async () => {
     try {
-      const res = await axios.post(
-        "http://localhost:5000/api/auth/verify-otp",
-        {
-          email,
-          otp,
-        }
-      );
-
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("user-info", JSON.stringify(res.data.user));
+      const res = await api.post("/api/auth/verify-otp", {
+        email,
+        otp,
+      });
       setUser(res.data.user);
-
       toast.success(res.data.message);
-      navigate("/user-dashboard");
+      setIsAuthenticated(true);
+      navigate("/");
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       if (error.response?.status === 410) {
         toast.error("Your OTP has expired.");
+        return <UnauthorizedErrorPage />;
       } else {
         toast.error(error.response?.data.message || "Something went wrong");
+        return <ServerErrorPage />;
       }
     }
   };
 
   const handleResendOTP = async () => {
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/send-otp", {
+      const res = await api.post("/api/auth/send-otp", {
         email,
       });
       toast.success(res.data.message);

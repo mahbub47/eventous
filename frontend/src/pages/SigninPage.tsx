@@ -1,43 +1,41 @@
-import { FaEnvelope, FaLock } from "react-icons/fa";
-import bgImage from "../assets/signup-bg.jpg";
-import { useGoogleLogin } from "@react-oauth/google";
-import axios from "axios";
-import { useNavigate, useLocation } from "react-router-dom";
-import { useState } from "react";
-import { toast } from "react-toastify";
 import { useAuth } from "@/context/AuthContext";
+import { useGoogleLogin } from "@react-oauth/google";
+import api from "@/utils/api";
+import { FaEnvelope, FaLock } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import bgImage from "@/assets/signup-bg.jpg";
+import ServerErrorPage from "./ServerErrorPage";
+import { SubmitHandler, useForm } from "react-hook-form";
+import z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const schema = z.object({
+  email: z.string().min(1, "Please enter your email").email(),
+});
+
+type FormFields = z.infer<typeof schema>;
 
 function SigninPage() {
-  const { setUser } = useAuth();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<FormFields>({
+    resolver: zodResolver(schema),
+  });
+  const { setUser, setIsAuthenticated } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
-  const user = location.state?.user;
 
-  const [email, setEmail] = useState(user?.email || "");
-  const [error, setError] = useState("");
-
-  const validateEmail = (email: string) => {
-    const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return pattern.test(email);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!validateEmail(email)) {
-      setError("Please enter a valid email.");
-      return;
-    }
-
-    setError("");
-    const res = await axios.post("http://localhost:5000/api/auth/send-otp", {
-      email,
+  const onSubmit: SubmitHandler<FormFields> = async (data) => {
+    const res = await api.post("/api/auth/send-otp", {
+      email: data.email,
     });
     toast.success(res.data.message);
     navigate("/otp-verification", {
       state: {
         user: {
-          email: email,
+          email: data.email,
         },
       },
     });
@@ -48,18 +46,24 @@ function SigninPage() {
       try {
         const { access_token } = tokenResponse;
 
-        const res = await axios.post("http://localhost:5000/api/auth/google", {
-          token: access_token,
-        });
+        const res = await api.post(
+          "/api/auth/google",
+          {
+            token: access_token,
+          },
+          {
+            withCredentials: true,
+          }
+        );
 
         toast.success(res.data.message);
-        localStorage.setItem("token", res.data.token);
-        localStorage.setItem("user-info", JSON.stringify(res.data.user));
         setUser(res.data.user);
+        setIsAuthenticated(true);
 
-        navigate("/user-dashboard");
+        navigate("/");
       } catch (error) {
         console.error("Login failed", error);
+        return <ServerErrorPage />;
       }
     },
     onError: (error) => console.error("Login Error:", error),
@@ -78,8 +82,8 @@ function SigninPage() {
       ></div>
       <div className="min-h-screen flex items-center justify-center bg-cover bg-center">
         <form
+          onSubmit={handleSubmit(onSubmit)}
           className="bg-white w-full max-w-md rounded-sm shadow-lg p-8 m-4 z-10"
-          onSubmit={handleSubmit}
         >
           <h1 className="text-xl font-normal text-stone-900">Eventous</h1>
           <h2 className="text-3xl md:text-4xl font-semibold mt-4 mb-2 text-stone-900">
@@ -98,25 +102,23 @@ function SigninPage() {
                 <FaEnvelope />
               </span>
               <input
+                {...register("email")}
                 name="email"
-                type="email"
-                required
-                value={email}
                 placeholder="Enter your email"
                 className="w-full pl-10 pr-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                }}
               />
             </label>
-            {error && <p className="text-red-500 text-sm">{error}</p>}
+            {errors.email && (
+              <p className="text-red-500 text-sm">{errors.email.message}</p>
+            )}
           </div>
 
           <button
+            disabled={isSubmitting}
             className="w-full bg-yellow-300 hover:bg-yellow-400 text-stone-950 font-semibold py-2 rounded-md mb-4 transition-colors"
             type="submit"
           >
-            Continue
+            {isSubmitting ? "Loading" : "Continue"}
           </button>
 
           <div className="flex items-center text-gray-600 text-sm mb-4">
@@ -130,6 +132,7 @@ function SigninPage() {
 
           <div className="flex justify-center gap-8 my-4">
             <button
+              type="button"
               className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 cursor-pointer"
               onClick={() => login()}
             >
