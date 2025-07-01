@@ -35,12 +35,12 @@ function AboutUs() {
         <div className="flex flex-col items-center text-center">
           <div className="w-24 h-24 bg-gray-200 rounded-full mb-4" />
           <h3 className="text-lg font-bold">Anik Mollik</h3>
-          <p className="text-sm text-gray-600">Frontend Developer</p>
+          <p className="text-sm text-gray-600">UI/UX Designer & Frontend Developer</p>
         </div>
         <div className="flex flex-col items-center text-center">
           <div className="w-24 h-24 bg-gray-200 rounded-full mb-4" />
           <h3 className="text-lg font-bold">Jihan Khan</h3>
-          <p className="text-sm text-gray-600">Backend & Database Engineer</p>
+          <p className="text-sm text-gray-600">Resource Manager & Frontend Developer</p>
         </div>
       </div>
     </div>
