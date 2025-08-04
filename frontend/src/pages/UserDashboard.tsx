@@ -22,6 +22,7 @@ function UserDashboard() {
         <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 grid-rows-1 gap-5">
           {events.map((event) => (
             <EventCard
+              id={event._id}
               key={event._id}
               title={event.eventTitle}
               date={event.eventDate}

@@ -1,3 +1,32 @@
 {
+  "restoreTerminals.terminals": [
+    {
+      "splitTerminals": [
+        {
+          "name": "git",
+          "commands": ["cd .", "git status"],
+          "icon": "git-branch"
+        }
+      ]
+    },
+    {
+      "splitTerminals": [
+        {
+          "name": "Clientt",
+          "commands": ["cd frontend", "npm run dev"],
+          "icon": "vm"
+        }
+      ]
+    },
+    {
+      "splitTerminals": [
+        {
+          "name": "Server",
+          "commands": ["cd backend", "npm start"],
+          "icon": "server"
+        }
+      ]
+    }
+  ],
   "postman.settings.dotenv-detection-notification-visibility": false
 }

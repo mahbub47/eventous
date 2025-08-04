@@ -26,6 +26,7 @@ export const getEvent: RequestHandler = async (req, res, next) => {
     if (!event) {
       throw createHttpError(404, "Event not found");
     }
+    console.log("Event found:", event.eventTitle);
     res.status(200).json(event);
   } catch (error) {
     next(error);
@@ -42,6 +43,7 @@ interface CreateEventBody {
   eventDescription?: string;
   eventPrice?: string;
   createdBy?: string;
+  eventCoverImage?: string;
 }
 
 export const createEvent: RequestHandler<
