@@ -1,7 +1,7 @@
 import api from "@/utils/api";
 import { useEffect, useState } from "react";
 import { FaRegBookmark } from "react-icons/fa";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 interface Event {
   eventId?: string;
@@ -34,6 +34,12 @@ function EventPage() {
   const [organizer, setOrganizer] = useState<Organizer | null>(null);
   const { eventId } = useParams<{ eventId: string }>();
   const [event, setEvent] = useState<Event | null>(null);
+
+  const navigate = useNavigate();
+
+  const handleViewOrganizerProfile = () => {
+    navigate(`/organizers/${event?.createdBy}`);
+  };
 
   useEffect(() => {
     const fetchOrganizer = async () => {
@@ -94,7 +100,7 @@ function EventPage() {
           alt=""
           className="w-10 h-10 object-cover rounded-full"
         />
-        <h1 className="font-semibold text-xl px-5 hover:underline cursor-pointer">{organizer?.name}</h1>
+        <h1 className="font-semibold text-xl px-5 hover:underline cursor-pointer" onClick={handleViewOrganizerProfile}>{organizer?.name}</h1>
         <button className="text-stone-900 font-medium cursor-pointer bg-yellow-300 py-2 px-3 rounded">
           Follow
         </button>
