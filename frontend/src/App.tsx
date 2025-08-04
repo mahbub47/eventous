@@ -18,6 +18,7 @@ import LoadingPage from "./pages/LoadingPage";
 import AccountSettingPage from "./pages/AccountSettingPage";
 import { ProtectedRoute } from "./routes/ProtectedRoute";
 import LikedEventsPage from "./pages/LikedEventsPage";
+import EventPage from "./pages/EventPage";
 
 export const GoogleAuthWrapper = () => {
   const clientId =
@@ -114,6 +115,14 @@ function App() {
           <Route path="/unauthorized" element={<UnauthorizedErrorPage />} />
           <Route path="/server-error" element={<ServerErrorPage />} />
           <Route path="/loading" element={<LoadingPage />} />
+          <Route
+            path="/events/:eventId"
+            element={
+              <Layout>
+                <EventPage />
+              </Layout>
+            }
+          />
         </Routes>
       </Router>
     </>
