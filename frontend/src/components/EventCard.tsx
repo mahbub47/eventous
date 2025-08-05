@@ -24,17 +24,17 @@ function EventCard({ id, title, date, location, imageUrl }: EventCardProps) {
   };
 
   const toggleSave = async () => {
-  const save = !isSaved;
+    const save = !isSaved;
 
-  const res = api.post(`/api/events/${id}/save`, {save});
-  toast.success((await res).data.message);
+    const res = api.post(`/api/events/${id}/save`, { save });
+    toast.success((await res).data.message);
 
-  if (save) {
-    setSavedEventIds((prev) => [...prev, id]);
-  } else {
-    setSavedEventIds((prev) => prev.filter((eventId) => eventId !== id));
-  }
-};
+    if (save) {
+      setSavedEventIds((prev) => [...prev, id]);
+    } else {
+      setSavedEventIds((prev) => prev.filter((eventId) => eventId !== id));
+    }
+  };
 
   return (
     <div className="w-full max-w-sm bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow relative">
@@ -49,8 +49,15 @@ function EventCard({ id, title, date, location, imageUrl }: EventCardProps) {
         >
           View Details
         </button>
-        <button className="absolute bottom-7 right-5 cursor-pointer" onClick={toggleSave}>
-          {isSaved ? (<FaBookmark className="w-5 h-5" />) : (<FaRegBookmark className="w-5 h-5" />)}
+        <button
+          className="absolute bottom-7 right-5 cursor-pointer"
+          onClick={toggleSave}
+        >
+          {isSaved ? (
+            <FaBookmark className="w-5 h-5" />
+          ) : (
+            <FaRegBookmark className="w-5 h-5" />
+          )}
         </button>
       </div>
     </div>

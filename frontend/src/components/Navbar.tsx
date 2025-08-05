@@ -3,6 +3,7 @@ import ServerErrorPage from "@/pages/ServerErrorPage";
 import api from "@/utils/api";
 import { useState } from "react";
 import { CgProfile } from "react-icons/cg";
+import { FaRegBookmark } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -55,12 +56,12 @@ function Navbar() {
               </a>
             </div>
             <div className="flex justify-center items-center px-4">
-              <i className="bx bx-heart text-red-600"></i>
+              <FaRegBookmark />
               <a
                 href={isAuthenticated ? "/liked-events" : "/login"}
                 className="text-md font-semibold text-stone-900 py-1.5 px-1"
               >
-                Likes
+                Saved
               </a>
             </div>
           </div>

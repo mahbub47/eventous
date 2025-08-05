@@ -26,6 +26,14 @@ interface AuthContextType {
   setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
   isLoading: boolean;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  following: User[];
+  setFollowing: React.Dispatch<React.SetStateAction<User[]>>;
+  followers: User[];
+  setFollowers: React.Dispatch<React.SetStateAction<User[]>>;
+  followersIds: string[];
+  setFollowersIds: React.Dispatch<React.SetStateAction<string[]>>;
+  followingIds: string[];
+  setFollowingIds: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -34,6 +42,46 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const [following, setFollowing] = useState<User[]>([]);
+  const [followers, setFollowers] = useState<User[]>([]);
+  const [followersIds, setFollowersIds] = useState<string[]>([]);
+  const [followingIds, setFollowingIds] = useState<string[]>([]);
+
+  const fetchFollowing = async () => {
+    try {
+      const res = await api.get("/api/users/me/following");
+      setFollowing(res.data);
+    } catch (error) {
+      console.log("Error occur while fetcing following accounts", error);
+    }
+  }
+
+  const fetchFollowers = async () => {
+    try {
+      const res = await api.get("/api/users/me/followers");
+      setFollowers(res.data);
+    } catch (error) {
+      console.log("Error occur while fetching followers", error);
+    }
+  }
+
+  const fetchFollowersIds = async () => {
+    try {
+      const res = await api.get("/api/users/me/followers-ids");
+      setFollowersIds(res.data);
+    } catch (error) {
+      console.log("Error occur while fetching followers ids", error);
+    }
+  }
+
+  const fetchFollowingIds = async () => {
+    try {
+      const res = await api.get("/api/users/me/following-ids");
+      setFollowingIds(res.data);
+    } catch (error) {
+      console.log("Error occur while fetching followers ids", error);
+    }
+  }
 
   const checkAuth = async () => {
     setIsLoading(true);
@@ -58,6 +106,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
   useEffect(() => {
     checkAuth();
+    fetchFollowing();
+    fetchFollowers();
+    fetchFollowersIds();
+    fetchFollowingIds();
   }, []);
 
   const value = {
@@ -67,6 +119,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setIsLoading,
     isAuthenticated,
     setIsAuthenticated,
+    following,
+    setFollowing,
+    followers,
+    setFollowers,
+    followersIds,
+    setFollowersIds,
+    followingIds,
+    setFollowingIds
   };
 
   if (isLoading) return <LoadingPage />;
