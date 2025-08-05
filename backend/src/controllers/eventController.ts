@@ -108,8 +108,10 @@ export const saveEvent: RequestHandler<
       ? { $addToSet: { savedEvents: eventId } }
       : { $pull: { savedEvents: eventId } };
 
+    const message = save ? "Saved" : "Unsaved"
+
     await userModel.findByIdAndUpdate(userId, update);
-    res.status(200).json({ message: "Saved" });
+    res.status(200).json({ message: message });
   } catch (error) {
     res.status(400).json({ message: "Something isn't right", error: error });
   }
