@@ -1,6 +1,7 @@
-import { InferSchemaType, model, Schema } from "mongoose";
+import mongoose, { InferSchemaType, model, Schema } from "mongoose";
 
-const userSchema = new Schema({
+const userSchema = new Schema(
+  {
     name: {
       type: String,
     },
@@ -12,7 +13,7 @@ const userSchema = new Schema({
     },
     role: {
       type: String,
-      enum: ['attendee', 'organizer'],
+      enum: ["attendee", "organizer"],
     },
     profileImage: {
       type: String,
@@ -40,8 +41,11 @@ const userSchema = new Schema({
     },
     zip: {
       type: String,
-    }
-}, {timestamps: true});
+    },
+    savedEvents: [{ type: mongoose.Schema.Types.ObjectId, ref: "Event" }],
+  },
+  { timestamps: true }
+);
 
 type User = InferSchemaType<typeof userSchema>;
 
