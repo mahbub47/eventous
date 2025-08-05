@@ -37,22 +37,105 @@ export const getUser: RequestHandler = async (req, res, next) => {
 export const getSavedEvents: RequestHandler = async (req, res, next) => {
   try {
     const userId = (req as AuthenticatedRequest).user._id;
-    const user = await userModel.findById(userId).populate('savedEvents');
+    const user = await userModel.findById(userId).populate("savedEvents");
     res.json(user?.savedEvents);
   } catch (error) {
     next(error);
   }
-}
+};
 
 export const getSavedEventIds: RequestHandler = async (req, res, next) => {
   try {
     const userId = (req as AuthenticatedRequest).user._id;
     const user = await userModel.findById(userId);
-  res.json(user?.savedEvents);
+    res.json(user?.savedEvents);
   } catch (error) {
     next(error);
   }
-}
+};
+
+export const followUser: RequestHandler<
+  { userId: string },
+  unknown,
+  { follow: string },
+  unknown
+> = async (req, res, next) => {
+  try {
+    const userId = (req as AuthenticatedRequest).user._id;
+    const userToFollow = req.params.userId;
+    const { follow } = req.body;
+    if (!mongoose.isValidObjectId(userToFollow)) {
+      throw createHttpError(400, "Invalid user id");
+    }
+
+    const update = follow
+      ? { $addToSet: { following: userToFollow } }
+      : { $pull: { following: userToFollow } };
+
+    const updateFollowers = follow
+      ? { $addToSet: { followers: userId } }
+      : { $pull: { followers: userId } };
+
+    const message = follow ? "following" : "unfollowed";
+
+    await userModel.findByIdAndUpdate(userId, update);
+    await userModel.findByIdAndUpdate(userToFollow, updateFollowers);
+
+    res.status(200).json({message: message})
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getFollowersOfUser: RequestHandler = async (req, res, next) => {
+  try {
+    const userId = req.params.userId;
+    const user = await userModel.findById(userId);
+    res.json(user?.followers);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getFollowers: RequestHandler = async (req, res, next) => {
+  try {
+    const userId = (req as AuthenticatedRequest).user._id;
+    const user = await userModel.findById(userId).populate("followers");
+    res.json(user?.followers);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getFollowing: RequestHandler = async (req, res, next) => {
+  try {
+    const userId = (req as AuthenticatedRequest).user._id;
+    const user = await userModel.findById(userId).populate("following");
+    res.json(user?.following);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getFollowersIds: RequestHandler = async (req, res, next) => {
+  try {
+    const userId = (req as AuthenticatedRequest).user._id;
+    const user = await userModel.findById(userId);
+    res.json(user?.followers);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getFollowingIds: RequestHandler = async (req, res, next) => {
+  try {
+    const userId = (req as AuthenticatedRequest).user._id;
+    const user = await userModel.findById(userId);
+    res.json(user?.following);
+  } catch (error) {
+    next(error);
+  }
+};
 
 type UserParam = {
   userId?: string;
