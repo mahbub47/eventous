@@ -3,6 +3,7 @@ import createHttpError from "http-errors";
 import mongoose from "mongoose";
 import eventModel from "../models/eventModel";
 import { AuthenticatedRequest } from "../types/authenticationRequest";
+import userModel from "../models/userModel";
 
 export const getEvents: RequestHandler = async (req, res, next) => {
   try {
@@ -85,6 +86,32 @@ export const createEvent: RequestHandler<
       .json({ message: "Event created successfully", event: newEvent });
   } catch (error) {
     next(error);
+  }
+};
+
+interface saveEventBody {
+  save?: boolean;
+}
+
+export const saveEvent: RequestHandler<
+  { eventID: string },
+  unknown,
+  saveEventBody,
+  unknown
+> = async (req, res) => {
+  try {
+    const eventId = req.params.eventID;
+    const { save } = req.body;
+    const userId = (req as AuthenticatedRequest).user._id;
+
+    const update = save
+      ? { $addToSet: { savedEvents: eventId } }
+      : { $pull: { savedEvents: eventId } };
+
+    await userModel.findByIdAndUpdate(userId, update);
+    res.status(200).json({ message: "Saved" });
+  } catch (error) {
+    res.status(400).json({ message: "Something isn't right", error: error });
   }
 };
 
