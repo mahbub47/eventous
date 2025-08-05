@@ -34,6 +34,26 @@ export const getUser: RequestHandler = async (req, res, next) => {
   }
 };
 
+export const getSavedEvents: RequestHandler = async (req, res, next) => {
+  try {
+    const userId = (req as AuthenticatedRequest).user._id;
+    const user = await userModel.findById(userId).populate('savedEvents');
+    res.json(user?.savedEvents);
+  } catch (error) {
+    next(error);
+  }
+}
+
+export const getSavedEventIds: RequestHandler = async (req, res, next) => {
+  try {
+    const userId = (req as AuthenticatedRequest).user._id;
+    const user = await userModel.findById(userId);
+  res.json(user?.savedEvents);
+  } catch (error) {
+    next(error);
+  }
+}
+
 type UserParam = {
   userId?: string;
 };
