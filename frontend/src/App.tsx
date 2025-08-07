@@ -21,6 +21,7 @@ import LikedEventsPage from "./pages/LikedEventsPage";
 import EventPage from "./pages/EventPage";
 import OrganizerPage from "./pages/OrganizerPage";
 import AllEventsPage from "./pages/AllEventsPage";
+import Organize from "./pages/Organize";
 
 export const GoogleAuthWrapper = () => {
   const clientId =
@@ -130,6 +131,14 @@ function App() {
             element={
               <Layout>
                 <OrganizerPage />
+              </Layout>
+            }
+          />
+          <Route
+            path="/organizers/:userId/organize"
+            element={
+              <Layout>
+                <Organize />
               </Layout>
             }
           />

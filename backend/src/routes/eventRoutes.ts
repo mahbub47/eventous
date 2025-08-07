@@ -7,6 +7,8 @@ const router = express.Router();
 
 router.get("/query", EventController.queryMyEvents);
 
+router.get("/my-events", verifyToken, EventController.getMyEvents);
+
 router.get("/", EventController.getEvents);
 
 router.get("/:eventID", EventController.getEvent);

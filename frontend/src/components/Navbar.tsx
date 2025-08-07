@@ -120,16 +120,16 @@ function Navbar() {
                         Account Settings
                       </a>
                       <a
-                        href=""
+                        href={`/organizers/${user?._id}`}
                         className="block px-4 py-4 text-md font-semibold text-gray-700 hover:bg-gray-100"
                       >
-                        My Events
+                        Profile
                       </a>
                       <a
-                        href=""
+                        href={`/organizers/${user?._id}/organize`}
                         className="block px-4 py-4 text-md font-semibold text-gray-700 hover:bg-gray-100"
                       >
-                        Following
+                        Organize
                       </a>
                       <a
                         className="block px-4 py-4 text-md font-semibold text-gray-700 hover:bg-gray-100"

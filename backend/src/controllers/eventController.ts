@@ -40,8 +40,6 @@ export const queryMyEvents: RequestHandler<
   unknown,
   {
     search?: string;
-    category?: string;
-    location?: string;
   }
 > = async (req, res) => {
   const { search = "" } = req.query;
@@ -63,6 +61,19 @@ export const queryMyEvents: RequestHandler<
     return;
   }
 };
+
+export const getMyEvents: RequestHandler = async (req, res) => {
+  const userId = (req as AuthenticatedRequest).user._id;
+  try {
+    const events = await eventModel.find({ createdBy: userId }).exec();
+    if (!events) {
+      throw createHttpError(404, "No events found for this user");
+    }
+    res.status(200).json(events);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
+}
 
 interface CreateEventBody {
   eventTitle?: string;

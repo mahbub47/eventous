@@ -85,9 +85,9 @@ function OrganizerPage() {
               >
                 {isFollowing ? "Following" : "Follow"}
               </button>
-              <button className="text-stone-900 font-medium cursor-pointer py-2 px-5 rounded">
+              <a href="/contact" className="text-stone-900 font-medium cursor-pointer py-2 px-5 rounded">
                 Contact
-              </button>
+              </a>
             </div>
           )}
 
