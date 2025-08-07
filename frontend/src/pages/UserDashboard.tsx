@@ -1,9 +1,17 @@
 import EventCard from "@/components/EventCard";
 import { useEventContext } from "@/context/EventContext";
 import LoadingPage from "./LoadingPage";
+import { useNavigate } from "react-router-dom";
 
 function UserDashboard() {
   const {events, isLoading} = useEventContext();
+
+  const navigate = useNavigate();
+
+  const handleUpcomingEvents = () => {
+    const query = "";
+    navigate(`/events?search=${encodeURIComponent(query.trim())}`);
+  }
 
   if(isLoading) return <LoadingPage/>
   
@@ -18,7 +26,11 @@ function UserDashboard() {
         </div>
       </div>
       <div className="w-8/12 mx-auto mt-30 md:mb-50 mb-10">
+      <div className="w-full flex justify-between">
         <h1 className="text-xl mb-3">Upcoming events</h1>
+        <h1 className="text-md underline cursor-pointer mb-3" onClick={handleUpcomingEvents}>See more</h1>
+      </div>
+        
         <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 grid-rows-1 gap-5">
           {events.map((event) => (
             <EventCard

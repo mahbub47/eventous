@@ -34,6 +34,36 @@ export const getEvent: RequestHandler = async (req, res, next) => {
   }
 };
 
+export const queryMyEvents: RequestHandler<
+  unknown,
+  unknown,
+  unknown,
+  {
+    search?: string;
+    category?: string;
+    location?: string;
+  }
+> = async (req, res) => {
+  const { search = "" } = req.query;
+
+  try {
+    const events = await eventModel.find({
+      $or: [
+        { eventTitle: { $regex: search, $options: "i" } },
+        { eventSubtitle: { $regex: search, $options: "i" } },
+        { eventDescription: { $regex: search, $options: "i" } },
+        { eventLocation: { $regex: search, $options: "i" } },
+      ],
+    });
+
+    res.status(200).json(events);
+    return;
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+    return;
+  }
+};
+
 interface CreateEventBody {
   eventTitle?: string;
   eventSubtitle?: string;
@@ -108,7 +138,7 @@ export const saveEvent: RequestHandler<
       ? { $addToSet: { savedEvents: eventId } }
       : { $pull: { savedEvents: eventId } };
 
-    const message = save ? "Saved" : "Unsaved"
+    const message = save ? "Saved" : "Unsaved";
 
     await userModel.findByIdAndUpdate(userId, update);
     res.status(200).json({ message: message });

@@ -5,6 +5,8 @@ import eventCoverUpload from "../middleware/eventCoverImageStorage";
 
 const router = express.Router();
 
+router.get("/query", EventController.queryMyEvents);
+
 router.get("/", EventController.getEvents);
 
 router.get("/:eventID", EventController.getEvent);
