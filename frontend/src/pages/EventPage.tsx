@@ -1,7 +1,10 @@
+import { useAuth } from "@/context/AuthContext";
+import { useEventContext } from "@/context/EventContext";
 import api from "@/utils/api";
 import { useEffect, useState } from "react";
-import { FaRegBookmark } from "react-icons/fa";
+import { FaBookmark, FaRegBookmark } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 
 interface Event {
   eventId?: string;
@@ -18,6 +21,7 @@ interface Event {
 }
 
 interface Organizer {
+  id?: string;
   name?: string;
   phone?: string;
   jobTitle?: string;
@@ -31,38 +35,77 @@ interface Organizer {
 }
 
 function EventPage() {
+  const { user, followingIds, setFollowingIds } = useAuth();
+  const { savedEventIds, setSavedEventIds } = useEventContext();
   const [organizer, setOrganizer] = useState<Organizer | null>(null);
   const { eventId } = useParams<{ eventId: string }>();
   const [event, setEvent] = useState<Event | null>(null);
 
   const navigate = useNavigate();
 
+  const isSaved = savedEventIds.includes(eventId!);
+
+  const notMyProfile = user?._id !== event?.createdBy;
+
+  const isFollowing =
+    event && event.createdBy ? followingIds.includes(event.createdBy) : false;
+
+  const toggleSave = async () => {
+    const save = !isSaved;
+
+    const res = api.post(`/api/events/${eventId}/save`, { save });
+    toast.success((await res).data.message);
+
+    if (save) {
+      setSavedEventIds((prev) => [...prev, eventId!]);
+    } else {
+      setSavedEventIds((prev) => prev.filter((eid) => eid !== eventId!));
+    }
+  };
+
+  const toggleFollow = async () => {
+    const follow = !isFollowing;
+
+    const res = api.post(`/api/users/${event?.createdBy}/follow`, { follow });
+    toast.success((await res).data.message);
+
+    if (follow) {
+      setFollowingIds((prev) => [...prev, event!.createdBy!]);
+    } else {
+      setFollowingIds((prev) => prev.filter((id) => id !== event!.createdBy!));
+    }
+  };
+
   const handleViewOrganizerProfile = () => {
     navigate(`/organizers/${event?.createdBy}`);
   };
 
   useEffect(() => {
-    const fetchOrganizer = async () => {
-      try {
-        const response = await api.get(`/api/users/${event?.createdBy}`);
-        console.log("Fetched User:", response.data);
-        setOrganizer(response.data);
-      } catch (error) {
-        console.error("Error fetching organizer:", error);
-      }
-    };
     const fetchEvent = async () => {
       try {
         const response = await api.get(`/api/events/${eventId}`);
-        console.log("Fetched event:", response.data);
         setEvent(response.data);
       } catch (error) {
         console.error("Error fetching event:", error);
       }
     };
-    fetchOrganizer();
+
     fetchEvent();
-  }, [eventId, event?.createdBy]);
+  }, [eventId]);
+
+  useEffect(() => {
+    const fetchOrganizer = async () => {
+      if (!event?.createdBy) return;
+      try {
+        const response = await api.get(`/api/users/${event.createdBy}`);
+        setOrganizer(response.data);
+      } catch (error) {
+        console.error("Error fetching organizer:", error);
+      }
+    };
+
+    fetchOrganizer();
+  }, [event?.createdBy]);
 
   const formattedDate = event?.eventDate
     ? new Date(event.eventDate).toLocaleDateString("en-GB", {
@@ -82,8 +125,15 @@ function EventPage() {
         className="w-full rounded-lg h-[40vh] object-cover"
       />
       <div className="relative w-full h-8">
-        <button className="absolute bottom-0 right-0">
-          <FaRegBookmark className="w-5 h-5" />
+        <button
+          className="absolute bottom-0 right-0 cursor-pointer"
+          onClick={toggleSave}
+        >
+          {isSaved ? (
+            <FaBookmark className="w-5 h-5" />
+          ) : (
+            <FaRegBookmark className="w-5 h-5" />
+          )}
         </button>
       </div>
       <h3 className="font-normal text-lg mt-10">{formattedDate}</h3>
@@ -100,10 +150,20 @@ function EventPage() {
           alt=""
           className="w-10 h-10 object-cover rounded-full"
         />
-        <h1 className="font-semibold text-xl px-5 hover:underline cursor-pointer" onClick={handleViewOrganizerProfile}>{organizer?.name}</h1>
-        <button className="text-stone-900 font-medium cursor-pointer bg-yellow-300 py-2 px-3 rounded">
-          Follow
-        </button>
+        <h1
+          className="font-semibold text-xl px-5 hover:underline cursor-pointer"
+          onClick={handleViewOrganizerProfile}
+        >
+          {organizer?.name}
+        </h1>
+        {notMyProfile && (
+          <button
+            className="text-stone-900 font-medium cursor-pointer bg-yellow-300 py-2 px-3 rounded"
+            onClick={toggleFollow}
+          >
+            {isFollowing ? "Following" : "Follow"}
+          </button>
+        )}
       </div>
       <div className="font-semibold text-2xl">Date & Time</div>
       <div className="font-normal text-lg mt-2 mb-10">
@@ -120,7 +180,9 @@ function EventPage() {
         </pre>
       </div>
       <div className="p-5 border-2 rounded w-fit flex flex-col items-center justify-center my-20">
-        <h1 className="font-normal text-2xl mb-5">{event.eventPrice === "0" ? "Free" : event.eventPrice + "  BDT"}</h1>
+        <h1 className="font-normal text-2xl mb-5">
+          {event.eventPrice === "0" ? "Free" : event.eventPrice + "  BDT"}
+        </h1>
         <button className="px-15 text-stone-900 font-medium cursor-pointer bg-yellow-300 py-2 rounded">
           Get Ticket
         </button>

@@ -24,6 +24,16 @@ function LandingPage() {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
 
+  const handleSeeAllEventsInDhaka = () => {
+    const query = "dhaka";
+    navigate(`/events?search=${encodeURIComponent(query.trim())}`);
+  };
+
+  const handleSeeAllWorkshopEvents = () => {
+    const query = "workshop";
+    navigate(`/events?search=${encodeURIComponent(query.trim())}`);
+  };
+
   if (isAuthenticated) {
     return <UserDashboard />;
   }
@@ -59,11 +69,14 @@ function LandingPage() {
 
       {/* Feature Events */}
       <div className="w-8/12 mx-auto mt-18 md:mb-30 mb-10">
-        <h1 className="text-xl mb-3">Events in Dhaka</h1>
+        <div className="w-full flex justify-between">
+          <h1 className="text-xl mb-3">Events in Dhaka</h1>
+          <h1 className="text-lg underline cursor-pointer mb-3" onClick={handleSeeAllEventsInDhaka}>See all</h1>
+        </div>
         <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 grid-rows-1 gap-5">
           {eventsInDhaka.map((event) => (
             <EventCard
-            id={event._id}
+              id={event._id}
               key={event._id}
               title={event.eventTitle}
               date={event.eventDate}
@@ -75,11 +88,14 @@ function LandingPage() {
       </div>
 
       <div className="w-8/12 mx-auto mt-10 md:mb-50 mb-10">
-        <h1 className="text-xl mb-3">Upcoming workshops</h1>
+        <div className="w-full flex justify-between">
+          <h1 className="text-xl mb-3">Upcoming Workshops</h1>
+          <h1 className="text-lg underline cursor-pointer mb-3" onClick={handleSeeAllWorkshopEvents}>See all</h1>
+        </div>
         <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 grid-rows-1 gap-5">
           {upcomingEvents.map((event) => (
             <EventCard
-            id={event._id}
+              id={event._id}
               key={event._id}
               title={event.eventTitle}
               date={event.eventDate}

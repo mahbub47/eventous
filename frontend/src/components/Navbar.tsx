@@ -3,6 +3,7 @@ import ServerErrorPage from "@/pages/ServerErrorPage";
 import api from "@/utils/api";
 import { useState } from "react";
 import { CgProfile } from "react-icons/cg";
+import { FaRegBookmark } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -24,6 +25,14 @@ function Navbar() {
       return <ServerErrorPage />;
     }
   };
+
+  const [query, setQuery] = useState("");
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!query.trim()) return;
+    navigate(`/events?search=${encodeURIComponent(query.trim())}`);
+  };
   return (
     <div>
       <header className="flex justify-between items-center text-stone-900 px-8 py-1.5 bg-white border-b-yellow-200 border-2 overflow-clip">
@@ -32,15 +41,23 @@ function Navbar() {
           <a href="/">
             <h1 className="text-3xl font-light">Eventous</h1>
           </a>
-          <div className="relative sm:flex bg-yellow-50 items-center mx-6 py-1.5 rounded-3xl xl:w-lg w-sm border-1 border-b-gray hidden">
+          <form
+            onSubmit={handleSearch}
+            className="relative sm:flex bg-yellow-50 items-center mx-6 py-1.5 rounded-3xl xl:w-lg w-sm border-1 border-b-gray hidden"
+          >
             <i className="bx bx-search absolute m-2 text-xl text-gray-500"></i>
             <input
               type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
               className="ps-8 text-md text-md font-light focus:outline-none w-full pe-12"
               placeholder="search event"
             />
-            <i className="bx bx-search absolute right-0 m-2 text-md cursor-pointer text-gray-500 bg-amber-300 rounded-2xl p-1.5"></i>
-          </div>
+            <button
+              type="submit"
+              className="bx bx-search absolute right-0 m-2 text-md cursor-pointer text-gray-500 bg-amber-300 rounded-2xl p-1.5"
+            ></button>
+          </form>
         </div>
 
         <nav className="flex justify-between items-center">
@@ -55,12 +72,12 @@ function Navbar() {
               </a>
             </div>
             <div className="flex justify-center items-center px-4">
-              <i className="bx bx-heart text-red-600"></i>
+              <FaRegBookmark />
               <a
                 href={isAuthenticated ? "/liked-events" : "/login"}
                 className="text-md font-semibold text-stone-900 py-1.5 px-1"
               >
-                Likes
+                Saved
               </a>
             </div>
           </div>
