@@ -4,6 +4,8 @@ import mongoose from "mongoose";
 import eventModel from "../models/eventModel";
 import { AuthenticatedRequest } from "../types/authenticationRequest";
 import userModel from "../models/userModel";
+import path from "path";
+import fs from "fs";
 
 export const getEvents: RequestHandler = async (req, res, next) => {
   try {
@@ -29,6 +31,26 @@ export const getEvent: RequestHandler = async (req, res, next) => {
     }
     console.log("Event found:", event.eventTitle);
     res.status(200).json(event);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateEventDescription: RequestHandler = async (req, res, next) => {
+  const eventId = req.params.eventID;
+  const { eventDescription } = req.body;
+
+  try {
+    if (!mongoose.isValidObjectId(eventId)) {
+      throw createHttpError(400, "Invalid event id");
+    }
+    const event = await eventModel.findById(eventId).exec();
+    if (!event) {
+      throw createHttpError(404, "Event not found");
+    }
+    event.eventDescription = eventDescription;
+    await event.save();
+    res.status(200).json({ message: "Event description updated successfully" });
   } catch (error) {
     next(error);
   }
@@ -223,22 +245,27 @@ export const updateEvent: RequestHandler<
 };
 
 export const deleteEvent: RequestHandler = async (req, res, next) => {
-  const eventId = req.params.eventID;
-
   try {
-    if (!mongoose.isValidObjectId(eventId)) {
-      throw createHttpError(400, "Invalid event id");
-    }
+    const { eventID } = req.params;
 
-    const event = await eventModel.findById(eventId).exec();
-
+    const event = await eventModel.findById(eventID);
     if (!event) {
-      throw createHttpError(404, "Event not found");
+      res.status(404).json({ message: "Event not found" });
+      return;
     }
 
-    await event.deleteOne();
+    // Delete cover photo from local storage if exists
+    if (event.eventCoverImage) {
+      const filePath = path.join(__dirname, "..", event.eventCoverImage);
+      fs.unlink(filePath, (err) => {
+        if (err) console.error("Error deleting file:", err);
+      });
+    }
 
-    res.sendStatus(204);
+    // Delete event from DB
+    await eventModel.findByIdAndDelete(eventID);
+
+    res.json({ message: "Event and cover photo deleted successfully" });
   } catch (error) {
     next(error);
   }
