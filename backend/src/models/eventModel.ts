@@ -10,7 +10,10 @@ const eventSchema = new Schema({
     eventLocation: {type: String, required: true},
     eventDescription: {type: String, required: true},
     eventPrice: {type: String, required: true},
-    createdBy: {type: String, required: true}
+    createdBy: {type: String, required: true},
+    totalTickets: {type: String, required: false},
+    totalSoldTickets: {type: String, required: false},
+    grossRevenue: {type: String, required: false}
 }, {timestamps: true});
 
 type Event = InferSchemaType<typeof eventSchema>;

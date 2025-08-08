@@ -7,6 +7,8 @@ const router = express.Router();
 
 router.get("/:userId", UserController.getUser);
 
+router.get("/me/followers-ids", verifyToken, UserController.getFollowersIds);
+
 router.get("/me/saved-events", verifyToken, UserController.getSavedEvents);
 
 router.get("/me/saved-event-ids", verifyToken, UserController.getSavedEventIds);
@@ -16,8 +18,6 @@ router.post("/:userId/follow", verifyToken, UserController.followUser);
 router.get("/:userId/followers-ids", UserController.getFollowersOfUser);
 
 router.get("/me/followers", verifyToken, UserController.getFollowers);
-
-router.get("/me/followers-ids", verifyToken, UserController.getFollowersIds);
 
 router.get("/me/following", verifyToken, UserController.getFollowing);
 
