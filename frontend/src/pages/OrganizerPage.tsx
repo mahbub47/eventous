@@ -42,14 +42,6 @@ function OrganizerPage() {
   };
 
   useEffect(() => {
-    const fetchOrganizersFollowers = async () => {
-      try {
-        const res = await api.get(`/api/users/${userId}/followers-ids`);
-        setOrganizersFollowers(res.data);
-      } catch (error) {
-        console.log("Error occur while fetch number of followers", error);
-      }
-    }
     const fetchOrganizer = async () => {
       try {
         const response = await api.get(`/api/users/${userId}`);
@@ -59,9 +51,18 @@ function OrganizerPage() {
         console.error("Error fetching organizer:", error);
       }
     };
+    const fetchOrganizersFollowers = async () => {
+      try {
+        const res = await api.get(`/api/users/${userId}/followers-ids`);
+        console.log("Fetched Followers of organizer:", res.data);
+        setOrganizersFollowers(res.data);
+      } catch (error) {
+        console.log("Error occur while fetch number of followers", error);
+      }
+    };
     fetchOrganizer();
     fetchOrganizersFollowers();
-  }, [userId, organizersFollowers]);
+  }, [userId]);
 
   const { events } = useEventContext();
 
@@ -70,13 +71,15 @@ function OrganizerPage() {
   return (
     <>
       <div className="min-h-screen">
-        <div className="p-10 mx-auto w-[40%] h-100 my-20 rounded-xl border-stone-200 border-2 flex flex-col items-center">
+        <div className="p-10 mx-auto w-[80%] md:w-[40%] h-100 md:my-20 my-5 rounded-xl border-stone-200 border-2 flex flex-col items-center">
           <img
             src={`http://localhost:5000${organizer?.profileImage}`}
             alt="Profile image"
             className="w-24 h-24 object-cover rounded-full"
           />
-          <h1 className="font-semibold text-2xl my-5">{organizer?.name}</h1>
+          <h1 className="font-semibold text-lg lg:text-2xl my-5">
+            {organizer?.name}
+          </h1>
           {notMyProfile && (
             <div className="flex gap-5">
               <button
@@ -85,7 +88,10 @@ function OrganizerPage() {
               >
                 {isFollowing ? "Following" : "Follow"}
               </button>
-              <a href="/contact" className="text-stone-900 font-medium cursor-pointer py-2 px-5 rounded">
+              <a
+                href="/contact"
+                className="text-stone-900 font-medium cursor-pointer py-2 px-5 rounded"
+              >
                 Contact
               </a>
             </div>
