@@ -1,7 +1,9 @@
 /* eslint-disable no-constant-binary-expression */
+import { useAuth } from "@/context/AuthContext";
 import api from "@/utils/api";
 import { useEffect, useState } from "react";
 import { GoKebabHorizontal } from "react-icons/go";
+import { useNavigate } from "react-router-dom";
 
 type Event = {
   _id: string;
@@ -21,7 +23,11 @@ type Event = {
 };
 
 function Organize() {
+  const {user} = useAuth();
   const [myEvents, setMyEvents] = useState<Event[]>([]);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isOpenID, setIsOpenID] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchMyEvents = async () => {
@@ -35,6 +41,15 @@ function Organize() {
     };
     fetchMyEvents();
   }, []);
+
+  const handleToggle = (id: string) => {
+    setIsOpenID(id);
+    setIsOpen(!isOpen);
+  };
+
+  const handleEditEvent = (eventId: string) => {
+    navigate(`/organizers/${user?._id}/organize/${eventId}/edit`);
+  }
 
   return (
     <div className="min-h-screen">
@@ -93,7 +108,32 @@ function Organize() {
                     <div className={`${event.eventDate && new Date(event.eventDate) > new Date() ? "bg-green-200" : "bg-red-200"} ${event.eventDate && new Date(event.eventDate) === new Date() ? "bg-blue-200" : ""} px-4 rounded text-sm py-1`}>{event.eventDate && new Date(event.eventDate) > new Date() ? "Upcoming" : "Past"}{event.eventDate && new Date(event.eventDate) === new Date() ? "Ongoing" : ""}</div>
                   </div>
                   <div>
-                    <GoKebabHorizontal className="h-5 w-5 mr-5 cursor-pointer" />
+                    <GoKebabHorizontal className="h-5 w-5 mr-5 cursor-pointer" onClick={() => handleToggle(event._id)}/>
+                    <div className={`border-2 bg-white border-gray-300 absolute ${isOpen && isOpenID === event._id ? "block" : "hidden"}`}>
+                      <div className="py-1">
+                      <a
+                        className="block px-2 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 cursor-pointer"
+                        onClick={() => handleEditEvent(event._id)}
+                      >
+                        Edit
+                      </a>
+                      <a
+                        className="block px-2 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 cursor-pointer"
+                      >
+                        Bookings
+                      </a>
+                      <a
+                        className="block px-2 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 cursor-pointer"
+                      >
+                        Statistics
+                      </a>
+                      <a
+                        className="block px-2 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 cursor-pointer"
+                      >
+                        Delete
+                      </a>
+                    </div>
+                    </div>
                   </div>
                 </div>
               </div>

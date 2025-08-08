@@ -13,6 +13,8 @@ router.get("/", EventController.getEvents);
 
 router.get("/:eventID", EventController.getEvent);
 
+router.put("/:eventID/description", EventController.updateEventDescription);
+
 router.post("/:eventID/save", verifyToken, EventController.saveEvent);
 
 router.post(
