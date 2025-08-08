@@ -121,6 +121,7 @@ export const getFollowersIds: RequestHandler = async (req, res, next) => {
   try {
     const userId = (req as AuthenticatedRequest).user._id;
     const user = await userModel.findById(userId);
+    console.log("Fetched Followers IDs:", user?.followers);
     res.json(user?.followers);
   } catch (error) {
     next(error);

@@ -1,3 +1,4 @@
+/* eslint-disable no-constant-binary-expression */
 import api from "@/utils/api";
 import { useEffect, useState } from "react";
 import { GoKebabHorizontal } from "react-icons/go";
@@ -14,6 +15,9 @@ type Event = {
   eventDescription: string;
   eventCoverImage?: string;
   createdBy?: string;
+  grossRevenue?: string;
+  totalTickets?: string;
+  totalSoldTickets?: string;
 };
 
 function Organize() {
@@ -24,16 +28,17 @@ function Organize() {
       try {
         const response = await api.get("/api/events/my-events");
         setMyEvents(response.data);
+        console.log("Fetched my events:", response.data);
       } catch (error) {
         console.error("Error fetching my events:", error);
       }
     };
     fetchMyEvents();
-  });
+  }, []);
 
   return (
     <div className="min-h-screen">
-      <div className="w-8/12 mx-auto mt-20">
+      <div className="lg:w-8/12 w-10/12 mx-auto mt-20">
         <h1 className="text-3xl font-medium mb-4">Events</h1>
         <div className="flex flex-col gap-4">
           {myEvents.map((event) => {
@@ -56,7 +61,7 @@ function Organize() {
                 })
               : "Date not available";
             return (
-              <div className="w-full p-5 bg-stone-100 flex" key={event._id}>
+              <div className="w-full p-5 bg-stone-100 flex lg:flex-row flex-col" key={event._id}>
                 <div className="flex-1 flex">
                   <div className="flex flex-col justify-center items-center text-center mx-5">
                     <div className="font-normal text-lg text-red-500">
@@ -74,18 +79,18 @@ function Organize() {
                     <div className="text-xs">{formattedDATE}</div>
                   </div>
                 </div>
-                <div className="flex-1 flex justify-between items-center">
+                <div className="flex-1 flex justify-between items-center mt-5 lg:mt-0">
                   <div className="flex flex-col items-center">
                     <div className="text-sm">Ticket sold</div>
-                    <div>0</div>
+                    <div>{event.totalSoldTickets || 0} {event.totalTickets && "/" + event.totalTickets}</div>
                   </div>
                   <div className="flex flex-col items-center">
                     <div className="text-sm">Gross</div>
-                    <div>0</div>
+                    <div>{event.grossRevenue || 0}</div>
                   </div>
                   <div className="flex flex-col items-center">
                     <div className="text-sm mb-1">Status</div>
-                    <div className="bg-green-200 px-4 rounded text-sm py-1">Upcoming</div>
+                    <div className={`${event.eventDate && new Date(event.eventDate) > new Date() ? "bg-green-200" : "bg-red-200"} ${event.eventDate && new Date(event.eventDate) === new Date() ? "bg-blue-200" : ""} px-4 rounded text-sm py-1`}>{event.eventDate && new Date(event.eventDate) > new Date() ? "Upcoming" : "Past"}{event.eventDate && new Date(event.eventDate) === new Date() ? "Ongoing" : ""}</div>
                   </div>
                   <div>
                     <GoKebabHorizontal className="h-5 w-5 mr-5 cursor-pointer" />
