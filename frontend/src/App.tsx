@@ -22,6 +22,7 @@ import EventPage from "./pages/EventPage";
 import OrganizerPage from "./pages/OrganizerPage";
 import AllEventsPage from "./pages/AllEventsPage";
 import Organize from "./pages/Organize";
+import EditEventPage from "./pages/EditEventPage";
 
 export const GoogleAuthWrapper = () => {
   const clientId =
@@ -148,6 +149,16 @@ function App() {
               <Layout>
                 <AllEventsPage />
               </Layout>
+            }
+          />
+          <Route
+            path="/organizers/:userId/organize/:eventId/edit"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <EditEventPage />
+                </Layout>
+              </ProtectedRoute>
             }
           />
         </Routes>
