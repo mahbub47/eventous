@@ -254,18 +254,16 @@ export const deleteEvent: RequestHandler = async (req, res, next) => {
       return;
     }
 
-    // Delete cover photo from local storage if exists
     if (event.eventCoverImage) {
-      const filePath = path.join(__dirname, "..", event.eventCoverImage);
+      const filePath = path.join(__dirname, "../../uploads/event-covers", event.eventCoverImage);
       fs.unlink(filePath, (err) => {
         if (err) console.error("Error deleting file:", err);
       });
     }
 
-    // Delete event from DB
     await eventModel.findByIdAndDelete(eventID);
 
-    res.json({ message: "Event and cover photo deleted successfully" });
+    res.json({ message: "Event deleted successfully" });
   } catch (error) {
     next(error);
   }

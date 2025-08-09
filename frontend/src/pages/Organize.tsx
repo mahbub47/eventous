@@ -4,6 +4,7 @@ import api from "@/utils/api";
 import { useEffect, useState } from "react";
 import { GoKebabHorizontal } from "react-icons/go";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 type Event = {
   _id: string;
@@ -50,6 +51,18 @@ function Organize() {
   const handleEditEvent = (eventId: string) => {
     navigate(`/organizers/${user?._id}/organize/${eventId}/edit`);
   }
+
+  const handleDeleteEvent = (eventId: string) => async () => {
+    try {
+      const res = await api.delete(`/api/events/${eventId}`);
+      setIsOpen(!isOpen);
+      toast.success(res.data.message);
+      navigate(`/organizers/${user?._id}/organize`);
+    } catch (error) {
+      console.error("Error deleting event:", error);
+      toast.error("Failed to delete event");
+    }
+  };
 
   return (
     <div className="min-h-screen">
@@ -129,6 +142,7 @@ function Organize() {
                       </a>
                       <a
                         className="block px-2 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 cursor-pointer"
+                        onClick={handleDeleteEvent(event._id)}
                       >
                         Delete
                       </a>
