@@ -107,6 +107,10 @@ function EventPage() {
     fetchOrganizer();
   }, [event?.createdBy]);
 
+  const handleGetTicket = () => {
+    navigate(`/events/${eventId}/book`);
+  };
+
   const formattedDate = event?.eventDate
     ? new Date(event.eventDate).toLocaleDateString("en-GB", {
         day: "numeric",
@@ -183,7 +187,7 @@ function EventPage() {
         <h1 className="font-normal lg:text-2xl text-lg mb-5">
           {event.eventPrice === "0" ? "Free" : event.eventPrice + "  BDT"}
         </h1>
-        <button className="px-15 text-stone-900 font-medium cursor-pointer bg-yellow-300 py-2 rounded">
+        <button className="px-15 text-stone-900 font-medium cursor-pointer bg-yellow-300 py-2 rounded" onClick={handleGetTicket}>
           Get Ticket
         </button>
       </div>
