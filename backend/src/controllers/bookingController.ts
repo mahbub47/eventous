@@ -4,16 +4,26 @@ import userModel from "../models/userModel";
 import mongoose from "mongoose";
 import bookingModel from "../models/bookingModel";
 
+interface createBookingRequest {
+  note?: string;
+  name?: string;
+  email?: string;
+  address?: string;
+  phone?: string;
+}
+
 export const createBooking: RequestHandler<
   { eventId: string },
   unknown,
-  { note?: string; },
+  createBookingRequest,
   unknown
 > = async (req, res) => {
   try {
+    console.log(req.body);
+    console.log("Event ID:", req.params.eventId);
     const { eventId } = req.params;
   const userId = (req as AuthenticatedRequest).user._id;
-  const { note } = req.body ?? {};
+  const { note, name, email, address, phone } = req.body;
 
   const isValidId = mongoose.Types.ObjectId.isValid(eventId);
   const user = await userModel.findById(userId);
@@ -41,7 +51,11 @@ if (existingBooking) {
   await bookingModel.create({
     event: eventId,
     user: userId,
-    note,
+    name: name,
+    email: email,
+    address: address,
+    phone: phone,
+    note: note
   });
 
   res.status(201).json({ message: "Booking created successfully" });
