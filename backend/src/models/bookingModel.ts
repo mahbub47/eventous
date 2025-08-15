@@ -3,7 +3,13 @@ import { InferSchemaType, model, Schema } from "mongoose";
 const bookingSchema = new Schema({
     event: { type: Schema.Types.ObjectId, ref: "Event", required: true },
     user: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    note: { type: String, required: false }
+    name: {type: String, required: true},
+    email: {type: String, required: true},
+    phone: {type: String, required: false},
+    address: {type: String, required: false},
+    note: { type: String, required: false },
+    paidStatus: { type: Boolean, default: false },
+    transactionId: { type: String, required: true },
 }, {timestamps: true});
 
 type Booking = InferSchemaType<typeof bookingSchema>;
