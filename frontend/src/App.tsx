@@ -24,6 +24,7 @@ import AllEventsPage from "./pages/AllEventsPage";
 import Organize from "./pages/Organize";
 import EditEventPage from "./pages/EditEventPage";
 import GetTicketPage from "./pages/GetTicketPage";
+import SuccessPaymentPage from "./pages/SuccessPaymentPage";
 
 export const GoogleAuthWrapper = () => {
   const clientId =
@@ -118,6 +119,7 @@ function App() {
           <Route path="/otp-verification" element={<OTPPage />} />
           <Route path="*" element={<PageNotFoundPage />} />
           <Route path="/unauthorized" element={<UnauthorizedErrorPage />} />
+          <Route path="/success-payment" element={<SuccessPaymentPage />} />
           <Route path="/server-error" element={<ServerErrorPage />} />
           <Route path="/loading" element={<LoadingPage />} />
           <Route
