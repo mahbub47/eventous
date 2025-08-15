@@ -6,4 +6,6 @@ const router = express.Router();
 
 router.post("/book/:eventId", verifyToken, bookingController.createBooking);
 
+router.post("/success/:tranId", bookingController.successBooking);
+
 export default router;

@@ -3,7 +3,7 @@ import api from "@/utils/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import z from "zod";
 
@@ -42,7 +42,6 @@ function GetTicketPage() {
   const [isNext, setIsNext] = useState(1);
   const { eventId } = useParams();
   const [event, setEvent] = useState<Event | null>(null);
-  const navigate = useNavigate();
 
   const {
     register,
@@ -100,8 +99,8 @@ function GetTicketPage() {
           "Content-Type": "application/json",
         },
       });
-      toast.success(res.data.message);
-      navigate(`/`);
+      toast.success(res.data.url);
+      window.location.href = res.data.url;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error("Error placing order:", error);

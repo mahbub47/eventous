@@ -7,7 +7,9 @@ const bookingSchema = new Schema({
     email: {type: String, required: true},
     phone: {type: String, required: false},
     address: {type: String, required: false},
-    note: { type: String, required: false }
+    note: { type: String, required: false },
+    paidStatus: { type: Boolean, default: false },
+    transactionId: { type: String, required: true },
 }, {timestamps: true});
 
 type Booking = InferSchemaType<typeof bookingSchema>;
