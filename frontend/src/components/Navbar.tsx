@@ -132,6 +132,12 @@ function Navbar() {
                         Organize
                       </a>
                       <a
+                        href={`/bookings/my-bookings`}
+                        className="block px-4 py-4 text-md font-semibold text-gray-700 hover:bg-gray-100"
+                      >
+                        My Bookings
+                      </a>
+                      <a
                         className="block px-4 py-4 text-md font-semibold text-gray-700 hover:bg-gray-100"
                         onClick={handleLogout}
                       >

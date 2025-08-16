@@ -64,6 +64,10 @@ function Organize() {
     }
   };
 
+  const handleBookingEvent = (eventId: string) => {
+    navigate(`/organizers/${user?._id}/organize/${eventId}/bookings`);
+  };
+
   return (
     <div className="min-h-screen">
       <div className="lg:w-8/12 w-10/12 mx-auto mt-20">
@@ -132,6 +136,7 @@ function Organize() {
                       </a>
                       <a
                         className="block px-2 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 cursor-pointer"
+                        onClick={() => handleBookingEvent(event._id)}
                       >
                         Bookings
                       </a>
