@@ -99,7 +99,6 @@ function GetTicketPage() {
           "Content-Type": "application/json",
         },
       });
-      toast.success(res.data.url);
       window.location.href = res.data.url;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {

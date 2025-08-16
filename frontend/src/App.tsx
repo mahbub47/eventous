@@ -25,6 +25,9 @@ import Organize from "./pages/Organize";
 import EditEventPage from "./pages/EditEventPage";
 import GetTicketPage from "./pages/GetTicketPage";
 import SuccessPaymentPage from "./pages/SuccessPaymentPage";
+import PaymentFailedPage from "./pages/PaymentFailedPage";
+import OrganizeBookingPage from "./pages/OrganizeBookingPage";
+import MyBookingsPage from "./pages/MyBookingsPage";
 
 export const GoogleAuthWrapper = () => {
   const clientId =
@@ -120,6 +123,7 @@ function App() {
           <Route path="*" element={<PageNotFoundPage />} />
           <Route path="/unauthorized" element={<UnauthorizedErrorPage />} />
           <Route path="/success-payment" element={<SuccessPaymentPage />} />
+          <Route path="/failed-payment" element={<PaymentFailedPage />} />
           <Route path="/server-error" element={<ServerErrorPage />} />
           <Route path="/loading" element={<LoadingPage />} />
           <Route
@@ -160,6 +164,26 @@ function App() {
               <ProtectedRoute>
                 <Layout>
                   <EditEventPage />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/organizers/:userId/organize/:eventId/bookings"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <OrganizeBookingPage />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/bookings/my-bookings"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <MyBookingsPage />
                 </Layout>
               </ProtectedRoute>
             }
