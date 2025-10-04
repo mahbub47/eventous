@@ -28,6 +28,9 @@ import SuccessPaymentPage from "./pages/SuccessPaymentPage";
 import PaymentFailedPage from "./pages/PaymentFailedPage";
 import OrganizeBookingPage from "./pages/OrganizeBookingPage";
 import MyBookingsPage from "./pages/MyBookingsPage";
+import AdminPage from "./pages/AdminPage";
+import AdminLoginPage from "./pages/AdminLoginPage";
+import { ProtectedAdminRoute } from "./routes/ProtectedAdminRoute";
 
 export const GoogleAuthWrapper = () => {
   const clientId =
@@ -198,6 +201,15 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedAdminRoute>
+                <AdminPage />
+              </ProtectedAdminRoute>
+            }
+          />
+          <Route path="/admin/login" element={<AdminLoginPage />} />
         </Routes>
       </Router>
     </>

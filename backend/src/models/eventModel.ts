@@ -13,7 +13,8 @@ const eventSchema = new Schema({
     createdBy: {type: String, required: true},
     totalTickets: {type: String, required: false},
     totalSoldTickets: {type: String, required: false},
-    grossRevenue: {type: String, required: false}
+    grossRevenue: {type: String, required: false},
+    pendingStatus: {type: Boolean, required: true, default: true}
 }, {timestamps: true});
 
 type Event = InferSchemaType<typeof eventSchema>;

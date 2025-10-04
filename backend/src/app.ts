@@ -10,6 +10,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import path from "path";
 import bookingRoutes from "./routes/bookingRoutes";
+import adminRoutes from "./routes/adminRoutes";
 
 const app = express();
 
@@ -29,6 +30,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+
+app.use("/api/admin", adminRoutes)
 
 app.use("/api/events", eventRoutes);
 
