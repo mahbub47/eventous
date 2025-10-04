@@ -9,7 +9,7 @@ import fs from "fs";
 
 export const getEvents: RequestHandler = async (req, res, next) => {
   try {
-    const events = await eventModel.find().exec();
+    const events = await eventModel.find({ pendingStatus: false }).exec();
     if (!events) {
       throw createHttpError(404, "No event found");
     }
@@ -74,6 +74,7 @@ export const queryMyEvents: RequestHandler<
         { eventDescription: { $regex: search, $options: "i" } },
         { eventLocation: { $regex: search, $options: "i" } },
       ],
+      pendingStatus: false
     });
 
     res.status(200).json(events);
@@ -87,7 +88,7 @@ export const queryMyEvents: RequestHandler<
 export const getMyEvents: RequestHandler = async (req, res) => {
   const userId = (req as AuthenticatedRequest).user._id;
   try {
-    const events = await eventModel.find({ createdBy: userId }).exec();
+    const events = await eventModel.find({ createdBy: userId, pendingStatus: false }).exec();
     if (!events) {
       throw createHttpError(404, "No events found for this user");
     }
@@ -143,6 +144,7 @@ export const createEvent: RequestHandler<
       eventPrice: eventPrice,
       createdBy: userId,
       eventCoverImage: `/uploads/event-covers/${req.file?.filename}`,
+      pendingStatus: true,
     });
     res
       .status(201)
