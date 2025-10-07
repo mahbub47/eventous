@@ -14,6 +14,8 @@ type Event = {
   eventDescription: string;
   eventCoverImage?: string;
   createdBy?: string;
+  totalTickets?: string;
+  totalSoldTickets?: string;
 };
 
 interface EventContextType {

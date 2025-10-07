@@ -103,7 +103,7 @@ function Organize() {
                   </div>
                   <div className="mx-5 flex flex-col justfy--between">
                     <div>
-                      <h2 className="text-lg font-semibold">
+                      <h2 className="text-lg font-semibold cursor-pointer hover:underline" onClick={() => {navigate(`/events/${event._id}`);}}>
                         {event.eventTitle}
                       </h2>
                       <h4 className="text-md">{event.eventLocation}</h4>
@@ -114,11 +114,11 @@ function Organize() {
                 <div className="flex-1 flex justify-between items-center mt-5 lg:mt-0">
                   <div className="flex flex-col items-center">
                     <div className="text-sm">Ticket sold</div>
-                    <div>{event.totalSoldTickets || 0} {event.totalTickets && "/" + event.totalTickets}</div>
+                    <div>{event.totalSoldTickets || 0} / {event.totalTickets || "NA"}</div>
                   </div>
                   <div className="flex flex-col items-center">
                     <div className="text-sm">Gross</div>
-                    <div>{event.grossRevenue || 0}</div>
+                    <div>{event.eventPrice === "0" ? "NA" : event.grossRevenue || 0}</div>
                   </div>
                   <div className="flex flex-col items-center">
                     <div className="text-sm mb-1">Status</div>
@@ -139,11 +139,6 @@ function Organize() {
                         onClick={() => handleBookingEvent(event._id)}
                       >
                         Bookings
-                      </a>
-                      <a
-                        className="block px-2 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 cursor-pointer"
-                      >
-                        Statistics
                       </a>
                       <a
                         className="block px-2 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 cursor-pointer"

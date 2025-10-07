@@ -32,6 +32,57 @@ export const createBooking: RequestHandler<
     const { eventId } = req.params;
     const { note, name, email, address, phone } = req.body;
     const event = await eventModel.findById(eventId).exec();
+
+    if (event?.eventPrice === "0") {
+      const isValidId = mongoose.Types.ObjectId.isValid(eventId);
+      const user = await userModel.findById(userId);
+
+      if (!user) {
+        res.status(404).json({ message: "User not found" });
+        return;
+      }
+
+      if (!isValidId) {
+        res.status(400).json({ message: "Invalid event ID" });
+        return;
+      }
+
+      const existingBooking = await bookingModel.findOne({
+        user: userId,
+        event: eventId,
+      });
+
+      if (existingBooking) {
+        res
+          .status(400)
+          .json({ message: "You have already booked this event." });
+        return;
+      }
+
+
+      await bookingModel.create({
+        event: eventId,
+        user: userId,
+        name: name,
+        email: email,
+        address: address,
+        phone: phone,
+        note: note,
+        paidStatus: true,
+        transactionId: transactionId,
+        eventName: event?.eventTitle || "Unknown Event",
+      });
+
+      await eventModel.findByIdAndUpdate(eventId, {
+        totalSoldTickets: (Number(event.totalSoldTickets) + 1).toString(),
+      });
+
+      res.json({
+        message: "Booking created successfully for free event",
+        url: `${process.env.CLIENT_URL}`,
+      });
+      return;
+    }
     const data = {
       total_amount: Number(event?.eventPrice) || 0,
       currency: "BDT",
@@ -107,7 +158,13 @@ export const createBooking: RequestHandler<
           transactionId: transactionId,
           eventName: event?.eventTitle || "Unknown Event",
         });
-        res.json({ url: GatewayPageURL });
+        await eventModel.findByIdAndUpdate(eventId, {
+          totalSoldTickets: (Number(event?.totalSoldTickets) + 1).toString(),
+        });
+        res.json({
+          message: "Redirecting to payment gateway...",
+          url: GatewayPageURL,
+        });
         console.log("Redirecting to: ", GatewayPageURL);
       } else {
         res.status(500).json({ message: "Payment gateway URL not found." });
@@ -256,6 +313,12 @@ export const successBooking: RequestHandler<
       `,
   });
 
+  await eventModel.findByIdAndUpdate(booking?.event, {
+    grossRevenue: (
+      Number(event?.grossRevenue) + Number(event?.eventPrice)
+    ).toString(),
+  });
+
   res.redirect(`${process.env.CLIENT_URL}/success-payment`);
 };
 
@@ -302,8 +365,20 @@ export const deleteBooking: RequestHandler<
 > = async (req, res) => {
   const { bookingId } = req.params;
   try {
+    const booking = await bookingModel.findById(bookingId);
+    const event = await eventModel.findById(booking?.event);
     await bookingModel.findByIdAndDelete(bookingId);
-    res.status(204).json({message: "Booking cancelled successfully"});
+    if (booking?.paidStatus) {
+      await eventModel.findByIdAndUpdate(booking?.event, {
+        grossRevenue: (
+          Number(event?.grossRevenue) - Number(event?.eventPrice)
+        ).toString(),
+      });
+    }
+    await eventModel.findByIdAndUpdate(booking?.event, {
+      totalSoldTickets: (Number(event?.totalSoldTickets) - 1).toString(),
+    });
+    res.status(204).json({ message: "Booking cancelled successfully" });
   } catch (error) {
     console.error("Error deleting booking:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -318,7 +393,9 @@ export const confirmBooking: RequestHandler<
 > = async (req, res) => {
   const { bookingId } = req.params;
   try {
-    await bookingModel.findByIdAndUpdate(bookingId, { bookingStatus: "confirmed" });
+    await bookingModel.findByIdAndUpdate(bookingId, {
+      bookingStatus: "confirmed",
+    });
     res.status(200).json({ message: "Booking confirmed successfully" });
   } catch (error) {
     console.error("Error confirming booking:", error);
@@ -329,15 +406,19 @@ export const confirmBooking: RequestHandler<
 export const getMyBookings: RequestHandler = async (req, res) => {
   const userId = (req as AuthenticatedRequest).user._id;
   try {
-    const bookings = await bookingModel.find({ user: userId });
-    res.json(bookings);
+    const bookings = await bookingModel.find({ user: userId }).populate("event");
+    const validBookings = bookings.filter(b => b.event !== null);
+    res.json(validBookings);
   } catch (error) {
     console.error("Error fetching bookings:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
 
-export const payBooking: RequestHandler<{ bookingId: string }> = async (req, res) => {
+export const payBooking: RequestHandler<{ bookingId: string }> = async (
+  req,
+  res
+) => {
   const { bookingId } = req.params;
   const store_id = process.env.STORE_ID!;
   const store_passwd = process.env.STORE_PASS!;
@@ -351,7 +432,8 @@ export const payBooking: RequestHandler<{ bookingId: string }> = async (req, res
       return;
     }
 
-    const transactionId = booking.transactionId || new mongoose.Types.ObjectId().toString();
+    const transactionId =
+      booking.transactionId || new mongoose.Types.ObjectId().toString();
     const event = await eventModel.findById(booking.event).exec();
     const data = {
       total_amount: Number(event?.eventPrice) || 0,
@@ -387,6 +469,11 @@ export const payBooking: RequestHandler<{ bookingId: string }> = async (req, res
       num_of_item: 1,
     };
     console.log("Booking data:", data);
+    await eventModel.findByIdAndUpdate(booking?.event, {
+      grossRevenue: (
+        Number(event?.grossRevenue) + Number(event?.eventPrice)
+      ).toString(),
+    });
 
     sslcz.init(data).then(async (apiResponse) => {
       const GatewayPageURL = apiResponse.GatewayPageURL;

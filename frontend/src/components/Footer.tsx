@@ -40,25 +40,11 @@ function Footer() {
           <h3 className="font-semibold mb-2">Follow Us</h3>
           <div className="flex space-x-4">
             <a
-              href="https://www.facebook.com/maashik.ahmed.7"
+              href="https://www.facebook.com/people/Eventous/61581550392815/"
               className="hover:text-white"
               target="_blank"
             >
               Facebook
-            </a>
-            <a
-              href="https://x.com/mahbub4b"
-              className="hover:text-white"
-              target="_blank"
-            >
-              Twitter
-            </a>
-            <a
-              href="https://github.com/mahbub47"
-              className="hover:text-white"
-              target="_blank"
-            >
-              GitHub
             </a>
           </div>
         </div>

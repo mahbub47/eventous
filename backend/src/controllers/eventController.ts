@@ -109,6 +109,7 @@ interface CreateEventBody {
   eventPrice?: string;
   createdBy?: string;
   eventCoverImage?: string;
+  totalTickets?: string;
 }
 
 export const createEvent: RequestHandler<
@@ -127,7 +128,9 @@ export const createEvent: RequestHandler<
     eventLocation,
     eventPrice,
     eventDescription,
+    totalTickets
   } = req.body;
+  console.log("Total Tickets:", totalTickets);
 
   try {
     if (!eventTitle || !eventLocation || !eventDescription || !eventPrice) {
@@ -145,10 +148,11 @@ export const createEvent: RequestHandler<
       createdBy: userId,
       eventCoverImage: `/uploads/event-covers/${req.file?.filename}`,
       pendingStatus: true,
+      totalTickets: totalTickets,
     });
     res
       .status(201)
-      .json({ message: "Event created successfully", event: newEvent });
+      .json({ message: "Event will be published after a review", event: newEvent });
   } catch (error) {
     next(error);
   }
