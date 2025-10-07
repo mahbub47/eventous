@@ -30,9 +30,16 @@ const schema = z.object({
   eventDate: z
     .string()
     .min(1, "Event date is required")
-    .refine((val) => !isNaN(Date.parse(val)), {
-      message: "Invalid date",
-    }),
+    .refine(
+      (val) => {
+        const selected = new Date(val);
+        const today = new Date();
+        selected.setHours(0, 0, 0, 0);
+        today.setHours(0, 0, 0, 0);
+        return selected >= today;
+      },
+      { message: "Date cannot be in the past" }
+    ),
   eventStartTime: z
     .string()
     .optional()
@@ -53,6 +60,12 @@ const schema = z.object({
       message: "Enter number",
     }),
   eventDescription: z.string().min(1, "Please enter your event details"),
+  totalTickets: z
+    .string()
+    .min(0, "Please enter a valid amount")
+    .refine((val) => !val || /^\d+(\.\d{1,2})?$/.test(val), {
+      message: "Enter number",
+    }),
 });
 
 type FormFields = z.infer<typeof schema>;
@@ -111,6 +124,7 @@ function CreateEventPage() {
   const navigate = useNavigate();
 
   const onSubmit: SubmitHandler<FormFields> = async (data) => {
+    console.log("Form Data:", data);
     const {
       eventCoverImage,
       eventTitle,
@@ -121,6 +135,7 @@ function CreateEventPage() {
       eventDescription,
       eventPrice,
       eventLocation,
+      totalTickets,
     } = data;
     try {
       const res = await api.post(
@@ -135,6 +150,7 @@ function CreateEventPage() {
           eventDescription,
           eventPrice,
           eventLocation,
+          totalTickets
         },
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -336,6 +352,23 @@ function CreateEventPage() {
           />
           {errors.eventPrice && (
             <p className="text-red-500 text-sm">{errors.eventPrice.message}</p>
+          )}
+        </div>
+        <div>
+          <label htmlFor="eventPrice" className="block mt-5">
+            Set Total tickets (optional)
+          </label>
+          <input
+            {...register("totalTickets")}
+            placeholder="Total tickets"
+            className="block max-w-50 border-2 border-gray-300 rounded-sm px-4 py-2 focus:outline-none focus:ring-1 focus:ring-yellow-300"
+            name="totalTickets"
+            id="totalTickets"
+          />
+          {errors.totalTickets && (
+            <p className="text-red-500 text-sm">
+              {errors.totalTickets.message}
+            </p>
           )}
         </div>
 

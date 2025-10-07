@@ -1,6 +1,7 @@
 import { useAuth } from "@/context/AuthContext";
 import api from "@/utils/api";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 interface Bookings {
@@ -22,6 +23,7 @@ interface Bookings {
 function MyBookingsPage() {
   const { user } = useAuth();
   const [bookings, setBookings] = useState<Bookings[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -85,7 +87,8 @@ function MyBookingsPage() {
                   </div>
                   <div className="mx-5 flex flex-col justify-between">
                     <div>
-                      <h2 className="text-lg font-semibold">
+                      <h2 className="text-lg font-semibold cursor-pointer hover:underline"
+                      onClick={() => {navigate(`/events/${booking.event}`);}}>
                         {booking.eventName || "Unknown Event"}
                       </h2>
                       <h4 className="text-md">booking ID: {booking._id}</h4>
