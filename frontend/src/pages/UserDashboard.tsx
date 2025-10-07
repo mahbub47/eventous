@@ -25,7 +25,7 @@ function UserDashboard() {
           Events
         </div>
       </div>
-      <div className="w-8/12 mx-auto mt-30 md:mb-50 mb-10">
+      <div className="w-8/12 mx-auto md:mt-30 mt-10 md:mb-50 mb-10">
       <div className="w-full flex justify-between">
         <h1 className="text-xl mb-3">Upcoming events</h1>
         <h1 className="text-md underline cursor-pointer mb-3" onClick={handleUpcomingEvents}>See more</h1>
@@ -39,6 +39,8 @@ function UserDashboard() {
               title={event.eventTitle}
               date={event.eventDate}
               location={event.eventLocation}
+              totalTickets={event.totalTickets}
+              totalSoldTickets={event.totalSoldTickets}
               imageUrl={`http://localhost:5000${event.eventCoverImage}`}
             />
           ))}

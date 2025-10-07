@@ -12,8 +12,8 @@ const eventSchema = new Schema({
     eventPrice: {type: String, required: true},
     createdBy: {type: String, required: true},
     totalTickets: {type: String, required: false},
-    totalSoldTickets: {type: String, required: false},
-    grossRevenue: {type: String, required: false},
+    totalSoldTickets: {type: String, required: false, default: "0"},
+    grossRevenue: {type: String, required: false, default: "0"},
     pendingStatus: {type: Boolean, required: true, default: true}
 }, {timestamps: true});
 

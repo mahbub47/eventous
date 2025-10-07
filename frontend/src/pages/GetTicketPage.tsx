@@ -99,6 +99,7 @@ function GetTicketPage() {
           "Content-Type": "application/json",
         },
       });
+      toast.success(res.data.message || "Booking placed successfully");
       window.location.href = res.data.url;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {

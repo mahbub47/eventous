@@ -7,6 +7,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 
 interface Event {
+  pendingStatus: boolean | undefined;
   eventId?: string;
   eventTitle?: string;
   eventSubtitle?: string;
@@ -18,6 +19,8 @@ interface Event {
   eventPrice?: string;
   createdBy?: string;
   eventCoverImage: string;
+  totalTickets?: string;
+  totalSoldTickets?: string;
 }
 
 interface Organizer {
@@ -32,6 +35,7 @@ interface Organizer {
   city?: string;
   zipCode?: string;
   profileImage?: string;
+  pendingStatus?: boolean;
 }
 
 function EventPage() {
@@ -187,8 +191,22 @@ function EventPage() {
         <h1 className="font-normal lg:text-2xl text-lg mb-5">
           {event.eventPrice === "0" ? "Free" : event.eventPrice + "  BDT"}
         </h1>
-        <button className="px-15 text-stone-900 font-medium cursor-pointer bg-yellow-300 py-2 rounded" onClick={handleGetTicket}>
-          Get Ticket
+        <button
+          className="px-15 text-stone-900 font-medium cursor-pointer bg-yellow-300 py-2 rounded"
+          onClick={handleGetTicket}
+          disabled={event.pendingStatus || (event.totalTickets && event.totalSoldTickets && parseInt(event.totalSoldTickets) >= parseInt(event.totalTickets)) || event.eventDate! < new Date().toISOString().split('T')[0]}
+        >
+          {event.pendingStatus
+            ? "Event not approved yet"
+            : (event.totalTickets &&
+                event.totalSoldTickets &&
+                parseInt(event.totalSoldTickets) >= parseInt(event.totalTickets))
+            ? "Sold Out"
+            : event.eventDate
+            ? event.eventDate < new Date().toISOString().split('T')[0]
+              ? "Event Passed"
+              : "Get Ticket"
+            : "Get Ticket"}
         </button>
       </div>
     </div>
