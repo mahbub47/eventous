@@ -81,6 +81,8 @@ function LandingPage() {
               title={event.eventTitle}
               date={event.eventDate}
               location={event.eventLocation}
+              totalTickets={event.totalTickets}
+              totalSoldTickets={event.totalSoldTickets}
               imageUrl={`http://localhost:5000${event.eventCoverImage}`}
             />
           ))}
@@ -100,6 +102,8 @@ function LandingPage() {
               title={event.eventTitle}
               date={event.eventDate}
               location={event.eventLocation}
+              totalTickets={event.totalTickets}
+              totalSoldTickets={event.totalSoldTickets}
               imageUrl={`http://localhost:5000${event.eventCoverImage}`}
             />
           ))}

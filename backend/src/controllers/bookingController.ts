@@ -468,12 +468,12 @@ export const payBooking: RequestHandler<{ bookingId: string }> = async (
       emi_option: 0,
       num_of_item: 1,
     };
-    console.log("Booking data:", data);
-    await eventModel.findByIdAndUpdate(booking?.event, {
-      grossRevenue: (
-        Number(event?.grossRevenue) + Number(event?.eventPrice)
-      ).toString(),
-    });
+    // console.log("Booking data:", data);
+    // await eventModel.findByIdAndUpdate(booking?.event, {
+    //   grossRevenue: (
+    //     Number(event?.grossRevenue) + Number(event?.eventPrice)
+    //   ).toString(),
+    // });
 
     sslcz.init(data).then(async (apiResponse) => {
       const GatewayPageURL = apiResponse.GatewayPageURL;
