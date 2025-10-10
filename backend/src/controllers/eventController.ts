@@ -38,7 +38,7 @@ export const getEvent: RequestHandler = async (req, res, next) => {
 
 export const updateEventDescription: RequestHandler = async (req, res, next) => {
   const eventId = req.params.eventID;
-  const { eventDescription } = req.body;
+  const { eventDescription, eventLocation } = req.body;
 
   try {
     if (!mongoose.isValidObjectId(eventId)) {
@@ -49,6 +49,7 @@ export const updateEventDescription: RequestHandler = async (req, res, next) => 
       throw createHttpError(404, "Event not found");
     }
     event.eventDescription = eventDescription;
+    event.eventLocation = eventLocation;
     await event.save();
     res.status(200).json({ message: "Event description updated successfully" });
   } catch (error) {

@@ -36,7 +36,7 @@ const schema = z.object({
         const today = new Date();
         selected.setHours(0, 0, 0, 0);
         today.setHours(0, 0, 0, 0);
-        return selected >= today;
+        return selected == today;
       },
       { message: "Date cannot be in the past" }
     ),
