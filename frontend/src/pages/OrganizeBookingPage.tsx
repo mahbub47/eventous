@@ -61,7 +61,7 @@ function OrganizeBookingPage() {
   const handleCancelBooking = async (bookingId: string) => {
     try {
       const res = await api.delete(`/api/bookings/${bookingId}`);
-      toast.success(res.data.message);
+      toast.success(res.data.message || "Booking canceled successfully");
       setBookings((prev) => prev.filter((b) => b._id !== bookingId));
     } catch (error) {
       console.error("Error canceling booking:", error);
@@ -128,7 +128,7 @@ function OrganizeBookingPage() {
                     <div className="text-sm">Booking status</div>
                     <div>{booking.bookingStatus}</div>
                   </div>
-                  <div className="flex flex-col items-center">
+                  <div className="flex flex-row gap-2 items-center">
                     <div className="text-sm mb-1"></div>
                     <button
                       disabled={booking.bookingStatus !== "pending"}
@@ -137,15 +137,15 @@ function OrganizeBookingPage() {
                           ? "bg-green-200"
                           : "bg-gray-200"
                       } px-5 py-2 font-semibold cursor-pointer`}
-                      onClick={
-                        booking.paidStatus
-                          ? () => handleConfirmBooking(booking._id)
-                          : () => handleCancelBooking(booking._id)
-                      }
+                      onClick={() => handleConfirmBooking(booking._id)}
                     >
-                      {booking.bookingStatus === "pending" && booking.paidStatus
-                        ? "Confirm"
-                        : "Cancel"}
+                      Confirm
+                    </button>
+                    <button
+                      className="bg-red-200 px-5 py-2 font-semibold cursor-pointer"
+                      onClick={() => handleCancelBooking(booking._id)}
+                    >
+                      Cancel
                     </button>
                   </div>
                 </div>
