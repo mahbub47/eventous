@@ -64,6 +64,11 @@ function OrganizerPage() {
     fetchOrganizersFollowers();
   }, [userId]);
 
+  const handleRedirect = () => {
+    const section = document.getElementById("myevents");
+    section?.scrollIntoView({ behavior: "smooth" });
+  };
+
   const { events } = useEventContext();
 
   const myEvents = events.filter((event) => event.createdBy == userId);
@@ -102,12 +107,12 @@ function OrganizerPage() {
               {organizersFollowers.length} <div>Followers</div>
             </div>
             <div className="bg-stone-500 w-[1px] h-full"></div>
-            <div className="flex items-center justify-center flex-col">
-              {numberOfMyEvents} <div>Events</div>
+            <div className="flex items-center justify-center flex-col ">
+              {numberOfMyEvents} <div className="cursor-pointer hover:underline" onClick={handleRedirect}>Events</div>
             </div>
           </div>
         </div>
-        <div className="w-8/12 mx-auto mt-30 md:mb-50 mb-10">
+        <div className="w-8/12 mx-auto mt-30 md:mb-50 mb-10" id="myevents">
           <h1 className="text-xl mb-3">Events</h1>
           <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 grid-rows-1 gap-5">
             {myEvents.map((event) => (
