@@ -74,7 +74,8 @@ function GetTicketPage() {
     setIsNext(1);
   };
 
-  const handleCheckout = () => {
+  const onCheckout = async (data: FormFields) => {
+    console.log("My Form Data" + data);
     setIsNext(2);
   };
 
@@ -106,7 +107,7 @@ function GetTicketPage() {
       console.error("Error placing order:", error);
       toast.error(error.response?.data?.message || "Failed to place booking");
     }
-  };
+  }
 
   const formattedDate = event?.eventDate
     ? new Date(event.eventDate).toLocaleDateString("en-GB", {
@@ -138,7 +139,7 @@ function GetTicketPage() {
           2
         </div>
       </div>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onCheckout)}>
         {isNext === 1 ? (
           <div className="w-6/12 mx-auto justify-start flex-col flex">
             <h1 className="font-normal text-4xl">Booking information</h1>
@@ -148,7 +149,6 @@ function GetTicketPage() {
                   Full Name
                 </label>
                 <input
-                  readOnly
                   {...register("name")}
                   type="text"
                   id="name"
@@ -178,7 +178,6 @@ function GetTicketPage() {
                   Address
                 </label>
                 <input
-                  readOnly
                   {...register("address")}
                   type="text"
                   id="address"
@@ -195,7 +194,6 @@ function GetTicketPage() {
                   Contact Number
                 </label>
                 <input
-                  readOnly
                   {...register("phone")}
                   type="tel"
                   id="phone"
@@ -217,7 +215,7 @@ function GetTicketPage() {
                 />
               </div>
               <button
-                onClick={handleCheckout}
+                onClick={handleSubmit(onCheckout)}
                 className="px-15 text-stone-900 font-medium cursor-pointer bg-yellow-300 py-2 rounded mt-20"
               >
                 Checkout
@@ -289,6 +287,7 @@ function GetTicketPage() {
               <button
                 type="submit"
                 className="mt-10 mb-30 text-lg font-normal py-2.5 px-10 bg-yellow-300 rounded-sm cursor-pointer hover:bg-amber-400 transition-colors"
+                onClick={handleSubmit(onSubmit)}
               >
                 Place order
               </button>
