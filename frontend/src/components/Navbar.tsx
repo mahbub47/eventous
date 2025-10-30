@@ -179,10 +179,10 @@ function Navbar() {
           style={{ transition: "transform 0.3 ease, opacity 0.3 ease" }}
         >
           <li className=" text-stone-900 list-none w-full cursor-pointer text-center p-4 hover:bg-amber-300 transition-all ">
-            <a href={"/signup"}>Create event</a>
+            <a href={isAuthenticated ? "/create-event" : "/login"}>Create event</a>
           </li>
           <li className="text-stone-900 list-none w-full cursor-pointer text-center p-4 hover:bg-amber-300 transition-all ">
-            <a href={"/signup"}>Likes</a>
+            <a href={isAuthenticated ? "/liked-events" : "/login"}>Likes</a>
           </li>
 
           {isAuthenticated ? (
